@@ -233,6 +233,76 @@ bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
  * info o tabulkach sa bude aktualizovat po kazdej sekunde( server--> klienti)
  * */
 
+void* serverThread(void* arg) {
+    GAME* game = (GAME*)arg;
+
+    while (1) {
+        pthread_mutex_lock(&game->game_Mutex);
+
+        // Perform server-related actions
+        printf("Server: Performing actions\n");
+
+        // Signal the client thread that the server has updated
+        pthread_cond_signal(&game->client_Condition);
+
+        // Wait for the client thread to complete its actions
+        pthread_cond_wait(&game->server_Condition, &game->game_Mutex);
+
+        pthread_mutex_unlock(&game->game_Mutex);
+
+        // Sleep or perform other server actions
+        sleep(1);
+    }
+
+    return NULL;
+}
+
+void* clientThread(void* arg) {
+    GAME* game = (GAME*)arg;
+
+    while (1) {
+        pthread_mutex_lock(&game->game_Mutex);
+
+        // Perform client-related actions
+        printf("Client: Performing actions\n");
+
+        // Signal the server thread that the client has updated
+        pthread_cond_signal(&game->server_Condition);
+
+        // Wait for the server thread to complete its actions
+        pthread_cond_wait(&game->client_Condition, &game->game_Mutex);
+
+        pthread_mutex_unlock(&game->game_Mutex);
+
+        // Sleep or perform other client actions
+        sleep(1);
+    }
+
+    return NULL;
+}
+
+void * timerThread(void * arg) {
+    TIMER * timer = (TIMER*)arg;
+    clock_t start_time = clock();
+    clock_t end_time = start_time + CLOCKS_PER_SEC;
+    //(timer->gameTimer_Mode * 60)
+    while(1) {
+        pthread_mutex_lock(&timer->timer_Mutex);
+
+        for (int i = timer->gameTimer_ActualTime_Seconds; i >= 0 ; i--,timer->gameTimer_ActualTime_Seconds--) {
+            start_time = clock();
+            end_time = start_time + CLOCKS_PER_SEC;
+            while (clock() < end_time) {
+                // Wait for one second
+                //pthread_cond_wait(&timer->casuj,&timer->timer_Mutex);
+            }
+            printf("time: %d\n",timer->gameTimer_ActualTime_Seconds);
+
+        }
+        pthread_mutex_unlock(&timer->timer_Mutex);
+    }
+    return NULL;
+}
 
 
 /*
@@ -251,23 +321,32 @@ bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
  * */
 
 int main() {
-    /* GAME game;
-     BOARD celepole;
-     TERMINAL_UI game_TerminalPrint;
-     TIMER game_Timer;
-     PLAYER playerServer;
-     PLAYER playerClient_1;
+    GAME game;
+    BOARD celepole;
+    TERMINAL_UI game_TerminalPrint;
+    TIMER game_Timer;
+    PLAYER playerServer;
+    PLAYER playerClient_1;
 
 
      //celepole.boardSize = 4;
      game_TerminalPrint.boardSize = 4;
      createBoard(&game_TerminalPrint);
-     initGameSettings(&game,&game_Timer,SIZE_4,MOVES_30,MINUTE);
+     initGameSettings(&game,&game_Timer,SIZE_4,MOVES_30,FOUR_MINUTES);
      initTimer(&game_Timer);
      initGame(&game,&game_Timer,&game_TerminalPrint);
-     */printf("generujem");
-    //generuj(&game_TerminalPrint,CLIENT_1);
+     printf("generujem");
     //pthread_t timerThreadId;
+   // pthread_create(&timerThreadId, NULL, timerThread, &game_Timer);
+   // pthread_join(timerThreadId,NULL);
+    generuj(&game_TerminalPrint,CLIENT_1);
+    generuj(&game_TerminalPrint,CLIENT_2);
+    printf("idem hore");
+    printBoard(&game_TerminalPrint);
+    pohyb('w',&game_TerminalPrint,CLIENT_1);
+    generuj(&game_TerminalPrint,CLIENT_1);
+    printBoard(&game_TerminalPrint);
+    pohyb('w',&game_TerminalPrint,CLIENT_1);
 
     // Initialize the mutex
     /* if (pthread_mutex_init(&game_Timer.timer_Mutex, NULL) != 0) {
@@ -288,7 +367,7 @@ int main() {
      celepole.policka[1][1].value = 16;
      celepole.policka[2][2].value = 128;
      celepole.policka[3][3].value = 1024;*/
-    // printBoard(&game_TerminalPrint);
+     printBoard(&game_TerminalPrint);
 
 
 }
@@ -343,25 +422,6 @@ void initPlayerClient_1(PLAYER * client_1) {
  *
  *
  * */
-void * timerThread(void * arg) {
-    TIMER * timer = arg;
-    clock_t start_time = clock();
-    clock_t end_time = start_time + CLOCKS_PER_SEC;
-    //(timer->gameTimer_Mode * 60)
-    for (int i = timer->gameTimer_ActualTime_Seconds; i >= 0 ; i--) {
-        pthread_mutex_lock(&timer->timer_Mutex);
-        while (clock() >= end_time) {
-            // Wait for one second
-            start_time = clock();
-            end_time = start_time + CLOCKS_PER_SEC;
-        }
-        printf("time: %d",timer->gameTimer_ActualTime_Seconds);
-        pthread_mutex_unlock(&timer->timer_Mutex);
-    }
-
-
-    return NULL;
-}
 
 void waitOneSecond() {
     clock_t start_time = clock();
@@ -427,7 +487,7 @@ void createBoardClient_1(TERMINAL_UI *terminalPrint) {
     }
     for (int riadok = 0; riadok < terminalPrint->boardSize; ++riadok) {
         for (int stlpec = 0; stlpec < terminalPrint->boardSize; ++stlpec) {
-            terminalPrint->boardClient_1.policka[riadok][stlpec].value = 16;
+            terminalPrint->boardClient_1.policka[riadok][stlpec].value = 0;
         }
     }
 }
@@ -439,7 +499,7 @@ void createBoardClient_2(TERMINAL_UI *terminalPrint) {
     }
     for (int riadok = 0; riadok < terminalPrint->boardSize; ++riadok) {
         for (int stlpec = 0; stlpec < terminalPrint->boardSize; ++stlpec) {
-            terminalPrint->boardClient_2.policka[riadok][stlpec].value = 8;
+            terminalPrint->boardClient_2.policka[riadok][stlpec].value = 0;
         }
     }
 }

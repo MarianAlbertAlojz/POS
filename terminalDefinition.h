@@ -98,6 +98,7 @@ typedef struct timer {
     uint8_t gameTimer_ActualTime_Seconds;
     enum TIMER_MODE gameTimer_Mode;// moze byt max 4 minuty lebo uint8 je 255
     pthread_mutex_t timer_Mutex;
+
 }TIMER;
 
 typedef struct game {
@@ -109,6 +110,9 @@ typedef struct game {
     TIMER * game_Timer;
     TERMINAL_UI * game_TerminalPrint;
     pthread_mutex_t game_Mutex;
+    pthread_cond_t server;
+    pthread_cond_t client;
+    pthread_cond_t timer;
 }GAME;
 
 void initPlayerServer(PLAYER * server);
