@@ -67,10 +67,17 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
+<<<<<<< HEAD
 CMAKE_SOURCE_DIR = /tmp/tmp.2jl5hwTCTf
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /tmp/tmp.2jl5hwTCTf/cmake-build-debug
+=======
+CMAKE_SOURCE_DIR = /tmp/tmp.p9WanbUdMo
+
+# The top-level build directory on which CMake was run.
+CMAKE_BINARY_DIR = /tmp/tmp.p9WanbUdMo/cmake-build-debug
+>>>>>>> origin/master
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +106,15 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
+<<<<<<< HEAD
 	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.2jl5hwTCTf/cmake-build-debug/CMakeFiles /tmp/tmp.2jl5hwTCTf/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
 	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.2jl5hwTCTf/cmake-build-debug/CMakeFiles 0
+=======
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles /tmp/tmp.p9WanbUdMo/cmake-build-debug//CMakeFiles/progress.marks
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles 0
+>>>>>>> origin/master
 .PHONY : all
 
 # The main clean target
@@ -142,6 +155,36 @@ POS/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/build
 .PHONY : POS/fast
 
+<<<<<<< HEAD
+=======
+client.o: client.c.o
+
+.PHONY : client.o
+
+# target to build an object file
+client.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/client.c.o
+.PHONY : client.c.o
+
+client.i: client.c.i
+
+.PHONY : client.i
+
+# target to preprocess a source file
+client.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/client.c.i
+.PHONY : client.c.i
+
+client.s: client.c.s
+
+.PHONY : client.s
+
+# target to generate assembly for a file
+client.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/client.c.s
+.PHONY : client.c.s
+
+>>>>>>> origin/master
 main.o: main.c.o
 
 .PHONY : main.o
@@ -169,6 +212,90 @@ main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/main.c.s
 .PHONY : main.c.s
 
+<<<<<<< HEAD
+=======
+server.o: server.c.o
+
+.PHONY : server.o
+
+# target to build an object file
+server.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server.c.o
+.PHONY : server.c.o
+
+server.i: server.c.i
+
+.PHONY : server.i
+
+# target to preprocess a source file
+server.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server.c.i
+.PHONY : server.c.i
+
+server.s: server.c.s
+
+.PHONY : server.s
+
+# target to generate assembly for a file
+server.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server.c.s
+.PHONY : server.c.s
+
+server/pos_sockets/active_socket.o: server/pos_sockets/active_socket.c.o
+
+.PHONY : server/pos_sockets/active_socket.o
+
+# target to build an object file
+server/pos_sockets/active_socket.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o
+.PHONY : server/pos_sockets/active_socket.c.o
+
+server/pos_sockets/active_socket.i: server/pos_sockets/active_socket.c.i
+
+.PHONY : server/pos_sockets/active_socket.i
+
+# target to preprocess a source file
+server/pos_sockets/active_socket.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.i
+.PHONY : server/pos_sockets/active_socket.c.i
+
+server/pos_sockets/active_socket.s: server/pos_sockets/active_socket.c.s
+
+.PHONY : server/pos_sockets/active_socket.s
+
+# target to generate assembly for a file
+server/pos_sockets/active_socket.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.s
+.PHONY : server/pos_sockets/active_socket.c.s
+
+terminal_display.o: terminal_display.c.o
+
+.PHONY : terminal_display.o
+
+# target to build an object file
+terminal_display.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/terminal_display.c.o
+.PHONY : terminal_display.c.o
+
+terminal_display.i: terminal_display.c.i
+
+.PHONY : terminal_display.i
+
+# target to preprocess a source file
+terminal_display.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/terminal_display.c.i
+.PHONY : terminal_display.c.i
+
+terminal_display.s: terminal_display.c.s
+
+.PHONY : terminal_display.s
+
+# target to generate assembly for a file
+terminal_display.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/terminal_display.c.s
+.PHONY : terminal_display.c.s
+
+>>>>>>> origin/master
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -178,9 +305,27 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... POS"
+<<<<<<< HEAD
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+=======
+	@echo "... client.o"
+	@echo "... client.i"
+	@echo "... client.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
+	@echo "... server.o"
+	@echo "... server.i"
+	@echo "... server.s"
+	@echo "... server/pos_sockets/active_socket.o"
+	@echo "... server/pos_sockets/active_socket.i"
+	@echo "... server/pos_sockets/active_socket.s"
+	@echo "... terminal_display.o"
+	@echo "... terminal_display.i"
+	@echo "... terminal_display.s"
+>>>>>>> origin/master
 .PHONY : help
 
 

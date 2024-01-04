@@ -4,7 +4,13 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/tmp/tmp.2jl5hwTCTf/main.c" "/tmp/tmp.2jl5hwTCTf/cmake-build-debug/CMakeFiles/POS.dir/main.c.o"
+  "/tmp/tmp.DeItrKHJyK/client.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/client.c.o"
+  "/tmp/tmp.DeItrKHJyK/main.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/main.c.o"
+  "/tmp/tmp.DeItrKHJyK/server.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/server.c.o"
+  "/tmp/tmp.DeItrKHJyK/server/pos_sockets/active_socket.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o"
+  "/tmp/tmp.DeItrKHJyK/server/pos_sockets/char_buffer.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o"
+  "/tmp/tmp.DeItrKHJyK/server/pos_sockets/passive_socket.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o"
+  "/tmp/tmp.DeItrKHJyK/terminal_display.c" "/tmp/tmp.DeItrKHJyK/cmake-build-debug/CMakeFiles/POS.dir/terminal_display.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
