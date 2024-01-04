@@ -55,24 +55,6 @@ build CMakeFiles/POS.dir/main.c.obj: C_COMPILER__POS_unscanned_Debug C$:/POS/mai
   OBJECT_DIR = CMakeFiles\POS.dir
   OBJECT_FILE_DIR = CMakeFiles\POS.dir
 
-build CMakeFiles/POS.dir/terminal_display.c.obj: C_COMPILER__POS_unscanned_Debug C$:/POS/terminal_display.c || cmake_object_order_depends_target_POS
-  DEP_FILE = CMakeFiles\POS.dir\terminal_display.c.obj.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\POS.dir
-  OBJECT_FILE_DIR = CMakeFiles\POS.dir
-
-build CMakeFiles/POS.dir/client.c.obj: C_COMPILER__POS_unscanned_Debug C$:/POS/client.c || cmake_object_order_depends_target_POS
-  DEP_FILE = CMakeFiles\POS.dir\client.c.obj.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\POS.dir
-  OBJECT_FILE_DIR = CMakeFiles\POS.dir
-
-build CMakeFiles/POS.dir/server.c.obj: C_COMPILER__POS_unscanned_Debug C$:/POS/server.c || cmake_object_order_depends_target_POS
-  DEP_FILE = CMakeFiles\POS.dir\server.c.obj.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\POS.dir
-  OBJECT_FILE_DIR = CMakeFiles\POS.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target POS
@@ -81,7 +63,7 @@ build CMakeFiles/POS.dir/server.c.obj: C_COMPILER__POS_unscanned_Debug C$:/POS/s
 #############################################
 # Link the executable POS.exe
 
-build POS.exe: C_EXECUTABLE_LINKER__POS_Debug CMakeFiles/POS.dir/main.c.obj CMakeFiles/POS.dir/terminal_display.c.obj CMakeFiles/POS.dir/client.c.obj CMakeFiles/POS.dir/server.c.obj
+build POS.exe: C_EXECUTABLE_LINKER__POS_Debug CMakeFiles/POS.dir/main.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\POS.dir
