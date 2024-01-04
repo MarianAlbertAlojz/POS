@@ -1,8 +1,18 @@
 #include <time.h>
-#include <conio.h>
 #include <pthread.h>
 #include "terminal_display.h"
+#include "server/pos_sockets/passive_socket.h"
+#include "server/pos_sockets/char_buffer.h"
+#include "server/pos_sockets/active_socket.h"
+#include "server/buffer.h"
+typedef struct thread_data {
+    pthread_mutex_t mutex;
+    pthread_cond_t is_full;
+    pthread_cond_t is_empty;
 
+    short port;
+    ACTIVE_SOCKET* my_socket;
+} THREAD_DATA;
 /*
  * Tu  bude logika od Andreja,teda pohyb hore,dolu,vpravo,vlavo
  * premysliet:
@@ -297,7 +307,22 @@ void * timerThread(void * arg) {
     return NULL;
 }
 
+void* process_client_data(void* thread_data) {
+    THREAD_DATA *data = (THREAD_DATA *)thread_data;
+    PASSIVE_SOCKET p_socket;
+    passive_socket_init(&p_socket);
+    passive_socket_start_listening(&p_socket, data->port);
+    passive_socket_wait_for_client(&p_socket, data->my_socket);
 
+    printf("connected1\n");
+    passive_socket_wait_for_client(&p_socket, data->my_socket);
+    printf("connected2\n");
+    passive_socket_stop_listening(&p_socket);
+    passive_socket_destroy(&p_socket);
+
+    active_socket_start_reading(data->my_socket);
+    return NULL;
+}
 /*
  * Tu  bude riesenie socketov na ktorom budeme robit pravdepodobne obaja
  * premysliet:
@@ -314,7 +339,19 @@ void * timerThread(void * arg) {
  * */
 
 int main() {
-    GAME game;
+    pthread_t th_produce;
+    pthread_t th_receive;
+    struct active_socket my_socket;
+    struct thread_data data;
+    active_socket_init(&my_socket);
+    data.port = 10001;
+    data.my_socket = &my_socket;
+    printf("spusti");
+    pthread_create(&th_receive, NULL, process_client_data, &data);
+    pthread_join(th_receive, NULL);
+
+    active_socket_destroy(&my_socket);
+    /* GAME game;
     BOARD celepole;
     TERMINAL_UI game_TerminalPrint;
     TIMER game_Timer;

@@ -11,5 +11,6 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <string.h>
 
 #endif //POS_LIBRARIES_H
