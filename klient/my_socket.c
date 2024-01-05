@@ -87,3 +87,16 @@ void sendData(MySocket* mySocket, const char* data) {
 void sendEndMessage(MySocket* mySocket) {
     sendData(mySocket, ":end");
 }
+
+void receiveData(MySocket* mySocket) {
+    char buffer[256];
+
+    int bytes_received = recv(mySocket->connectSocket, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_received < 0) {
+        perror("Error reading from socket");
+        destroyConnection(mySocket);
+        exit(EXIT_FAILURE);
+    }
+
+    buffer[bytes_received] = '\0';
+}

@@ -10,6 +10,7 @@ typedef struct thread_data {
     pthread_cond_t zapis;
     pthread_cond_t citaj;
     bool citanie;
+    GAME game;
 
     short port;
     ACTIVE_SOCKET* my_socket;
@@ -327,26 +328,44 @@ void* createConnection(void* thread_data) {
 
 void* receiveF(void* thread_data) {
     THREAD_DATA *data = (THREAD_DATA *) thread_data;
+    printf("receiving\n");
     while (data->citanie) {
+        printf("try get data\n");
         CHAR_BUFFER r_buf;
         char_buffer_init(&r_buf);
-
+        pthread_mutex_lock(&data->mutex);
         if(active_socket_try_get_read_data(data->my_socket, &r_buf)) {
             if(r_buf.size > 0) {
                 printf("%s\n", r_buf.data);
                 data->citanie = false;
                 active_socket_stop_reading(data->my_socket);
+                pthread_cond_signal(&data->zapis);
             }
         }
+        pthread_mutex_unlock(&data->mutex);
         char_buffer_destroy(&r_buf);
     }
     return NULL;
 }
-/*
+
 void* produceF(void* thread_data) {
-    THREAD_DATA *data = (THREAD_DATA *) thread_data;
+    THREAD_DATA *data = (THREAD_DATA *)thread_data;
+    CHAR_BUFFER buffer;
+    char_buffer_init(&buffer);
+
+    char *message = "Hello Client!";
+    snprintf(buffer.data, sizeof(buffer.data), "%s", message);
+
+    pthread_mutex_lock(&data->mutex);
+    pthread_cond_wait(&data->zapis,&data->mutex);
+    active_socket_write_data(data->my_socket, &buffer);
+    pthread_mutex_unlock(&data->mutex);
+    printf("send\n");
+
+     char_buffer_destroy(&buffer);
+
     return NULL;
-}*/
+}
 /*
  * Tu  bude riesenie socketov na ktorom budeme robit pravdepodobne obaja
  * premysliet:
@@ -365,20 +384,26 @@ void* produceF(void* thread_data) {
 int main() {
     pthread_t th_produce;
     pthread_t th_receive;
+    pthread_t connect;
     struct active_socket my_socket;
-    struct thread_data data;
     active_socket_init(&my_socket);
+    struct thread_data data;
     data.port = 10001;
     data.my_socket = &my_socket;
+    pthread_mutex_init(&data.mutex, NULL);
+    pthread_cond_init(&data.zapis, NULL);
+    pthread_cond_init(&data.citaj, NULL);
+
     createConnection(&data);
     data.citanie = true;
     pthread_create(&th_receive, NULL, receiveF, &data);
-    //pthread_create(&th_produce, NULL, produceF, &data);
+    pthread_create(&th_produce, NULL, produceF, &data);
     pthread_join(th_receive, NULL);
-    //pthread_join(th_produce, NULL);
+    pthread_join(th_produce, NULL);
 
     active_socket_destroy(&my_socket);
-    /* GAME game;
+
+/*    GAME game;
     BOARD celepole;
     TERMINAL_UI game_TerminalPrint;
     TIMER game_Timer;
@@ -413,7 +438,7 @@ int main() {
     pthread_cond_destroy(&game.timer);
     pthread_cond_destroy(&game.server);
     pthread_cond_destroy(&game.server);
-    /* generuj(&game_TerminalPrint,CLIENT_1);
+     generuj(&game_TerminalPrint,CLIENT_1);
      generuj(&game_TerminalPrint,CLIENT_2);
      printf("idem hore");
      printBoard(&game_TerminalPrint);
@@ -421,7 +446,7 @@ int main() {
      generuj(&game_TerminalPrint,CLIENT_1);
      printBoard(&game_TerminalPrint);
      pohyb('w',&game_TerminalPrint,CLIENT_1);
- */
+
     // Initialize the mutex
     /* if (pthread_mutex_init(&game_Timer.timer_Mutex, NULL) != 0) {
          fprintf(stderr, "Error initializing mutex.\n");
