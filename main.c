@@ -7,8 +7,9 @@
 #include "server/buffer.h"
 typedef struct thread_data {
     pthread_mutex_t mutex;
-    pthread_cond_t is_full;
-    pthread_cond_t is_empty;
+    pthread_cond_t zapis;
+    pthread_cond_t citaj;
+    bool citanie;
 
     short port;
     ACTIVE_SOCKET* my_socket;
@@ -307,7 +308,7 @@ void * timerThread(void * arg) {
     return NULL;
 }
 
-void* process_client_data(void* thread_data) {
+void* createConnection(void* thread_data) {
     THREAD_DATA *data = (THREAD_DATA *)thread_data;
     PASSIVE_SOCKET p_socket;
     passive_socket_init(&p_socket);
@@ -315,14 +316,37 @@ void* process_client_data(void* thread_data) {
     passive_socket_wait_for_client(&p_socket, data->my_socket);
 
     printf("connected1\n");
-    passive_socket_wait_for_client(&p_socket, data->my_socket);
-    printf("connected2\n");
+    /*passive_socket_wait_for_client(&p_socket, data->my_socket);
+    printf("connected2\n");*/
     passive_socket_stop_listening(&p_socket);
     passive_socket_destroy(&p_socket);
 
     active_socket_start_reading(data->my_socket);
     return NULL;
 }
+
+void* receiveF(void* thread_data) {
+    THREAD_DATA *data = (THREAD_DATA *) thread_data;
+    while (data->citanie) {
+        CHAR_BUFFER r_buf;
+        char_buffer_init(&r_buf);
+
+        if(active_socket_try_get_read_data(data->my_socket, &r_buf)) {
+            if(r_buf.size > 0) {
+                printf("%s\n", r_buf.data);
+                data->citanie = false;
+                active_socket_stop_reading(data->my_socket);
+            }
+        }
+        char_buffer_destroy(&r_buf);
+    }
+    return NULL;
+}
+/*
+void* produceF(void* thread_data) {
+    THREAD_DATA *data = (THREAD_DATA *) thread_data;
+    return NULL;
+}*/
 /*
  * Tu  bude riesenie socketov na ktorom budeme robit pravdepodobne obaja
  * premysliet:
@@ -346,9 +370,12 @@ int main() {
     active_socket_init(&my_socket);
     data.port = 10001;
     data.my_socket = &my_socket;
-    printf("spusti");
-    pthread_create(&th_receive, NULL, process_client_data, &data);
+    createConnection(&data);
+    data.citanie = true;
+    pthread_create(&th_receive, NULL, receiveF, &data);
+    //pthread_create(&th_produce, NULL, produceF, &data);
     pthread_join(th_receive, NULL);
+    //pthread_join(th_produce, NULL);
 
     active_socket_destroy(&my_socket);
     /* GAME game;
