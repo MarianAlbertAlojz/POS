@@ -200,6 +200,12 @@ POS_BINARY_DIR:STATIC=/tmp/tmp.p9WanbUdMo/cmake-build-debug
 //Value Computed by CMake
 POS_SOURCE_DIR:STATIC=/tmp/tmp.p9WanbUdMo
 
+//Value Computed by CMake
+POSclient_BINARY_DIR:STATIC=/tmp/tmp.p9WanbUdMo/cmake-build-debug
+
+//Value Computed by CMake
+POSclient_SOURCE_DIR:STATIC=/tmp/tmp.p9WanbUdMo
+
 //Path to a program.
 ProcessorCount_cmd_nproc:FILEPATH=/usr/bin/nproc
 

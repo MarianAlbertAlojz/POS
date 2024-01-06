@@ -48,7 +48,7 @@ _Bool active_socket_is_reading(struct active_socket* self) {
     return can_read;
 }
 
-/*_Bool active_socket_try_get_read_data(struct active_socket* self, struct char_buffer* output) {
+_Bool active_socket_try_get_read_data(struct active_socket* self, struct char_buffer* output) {
     _Bool result = false;
 
     if (pthread_mutex_trylock(&self->mutex_received_data) == 0) {
@@ -57,7 +57,7 @@ _Bool active_socket_is_reading(struct active_socket* self) {
     }
 
     return result;
-}*/
+}
 
 _Bool active_socket_is_end_message(struct active_socket* self, struct char_buffer* message) {
     return message->size == strlen(self->end_message) &&
@@ -124,20 +124,20 @@ void active_socket_start_reading(struct active_socket* self) {
 #undef BUFFER_LENGTH
 }
 
-void active_socket_write_data(struct active_socket* self, struct char_buffer* message) {
+void active_socket_write_data(struct active_socket* self, char * message, size_t size) {
     pthread_mutex_lock(&self->mutex_writing);
-    write(self->socket_descriptor, message->data, message->size);
+    printf("%zu\n",write(self->socket_descriptor, message, size));
     write(self->socket_descriptor, SOCKET_TERMINATE_CHAR, sizeof(SOCKET_TERMINATE_CHAR));
     pthread_mutex_unlock(&self->mutex_writing);
 }
 
-void active_socket_write_end_message(struct active_socket* self) {
+/*void active_socket_write_end_message(struct active_socket* self) {
     CHAR_BUFFER r_buf;
     char_buffer_init(&r_buf);
     char_buffer_append(&r_buf, self->end_message, strlen(self->end_message));
     active_socket_write_data(self, &r_buf);
     char_buffer_destroy(&r_buf);
-}
+}*/
 
 #undef INVALID_SOCKET
 #undef SOCKET_TERMINATE_CHAR

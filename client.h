@@ -5,4 +5,5 @@
 #ifndef POS_CLIENT_H
 #define POS_CLIENT_H
 
+int client();
 #endif //POS_CLIENT_H

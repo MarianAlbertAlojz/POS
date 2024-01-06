@@ -3,113 +3,105 @@
 //
 
 #include "server.h"
-/*int server(int argc, char *argv[]){
-    srand(time(NULL));
-    int sockfd;
-    struct sockaddr_in serv_addr;
+#include "server/pos_sockets/passive_socket.h"
+#include "server/pos_sockets/active_socket.h"
 
-    if (argc < 2)
-    {
-        fprintf(stderr,"usage %s port\n", argv[0]);
-        return 1;
+
+/*
+int server() {
+    pthread_t th_produce;
+    pthread_t th_receive;
+    struct active_socket my_socket;
+    struct thread_data data;
+    active_socket_init(&my_socket);
+    data.port = 30303;
+    data.my_socket = &my_socket;
+    printf("spusti\n");
+    pthread_create(&th_receive, NULL, process_client_data, &data);
+
+    pthread_join(th_receive, NULL);
+    consume(&data);
+
+
+    printf("%s\n",data.my_socket->received_data.first->data.data);
+    active_socket_stop_reading(&my_socket);
+    char * message = "client";
+    active_socket_write_data(&my_socket,message,6);
+
+    thread_data_destroy(&data);
+    active_socket_destroy(&my_socket);
+}
+*/
+int initServerSocket(SERVER *serverInfo) {
+    serverInfo->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverInfo->serverSocket < 0) {
+        perror("Chyba - socket.");
+        return -1;
     }
 
-    bzero((char*)&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(atoi(argv[1]));
-
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-    {
-        perror("Error creating socket");
-        return 1;
+    serverInfo->opt = 1;
+    if (setsockopt(serverInfo->serverSocket, SOL_SOCKET, SO_REUSEADDR, &(serverInfo->opt), sizeof(serverInfo->opt))) {
+        perror("setsockopt");
+        return -1;
     }
-
-    if (bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        perror("Error binding socket address");
-        return 2;
-    }
-    listen(sockfd, 5);
-    printf("------------------------------------------------------\n");
-    printf("Server sa  spustil, nastavte parametre hry.\n");
-    printf("------------------------------------------------------\n\n");
-
-    while (maxPocetHracov < 2 || maxPocetHracov > 3){
-        printf("*** Vyberte z maximalneho poctu hracov (2-3) ***\n");
-        scanf("%d",&maxPocetHracov);
-        if (maxPocetHracov < 2 || maxPocetHracov > 3){
-            printf("Zadali ste nespravnu volbu, zadajte znova !\n");
-        }
-    }
-
-    if (maxPocetHracov == 2){
-        while (velkostMapy < 3 || velkostMapy > 9){
-            printf("*** Vyberte z rozmedzia velkosti mapy, minimalne (3), maximalne (9) ***\n");
-            scanf("%d",&velkostMapy);
-            if (velkostMapy < 3 || velkostMapy > 9){
-                printf("Zadali ste nespravnu volbu, zadajte znova !\n");
-            }
-        }
-    } else{
-        while (velkostMapy < 5 || velkostMapy > 9){
-            printf("*** Vyberte z rozmedzia velkosti mapy, minimalne (5), maximalne (9) ***\n");
-            scanf("%d",&velkostMapy);
-            if (velkostMapy < 5 || velkostMapy > 9){
-                printf("Zadali ste nespravnu volbu, zadajte znova !\n");
-            }
-        }
-    }
-
-    zacinajuci = rand() % maxPocetHracov;
-    char **mapa = malloc(velkostMapy * sizeof(char *));
-    for (int i = 0; i < velkostMapy; ++i) {
-        mapa[i] = malloc(velkostMapy* sizeof(char));
-        for(int j=0; j<velkostMapy; j++){
-            mapa[i][j] = '-' ;
-        }
-    }
-
-    printf("------------------------------------------------------\n");
-    printf("Hra bola uspesne nastavena s parametrami:\npocet hracov %d\nvelkost mapy:%dx%d\n",maxPocetHracov,velkostMapy,velkostMapy);
-    printf("------------------------------------------------------\n\n");
-
-    pthread_t hraci[maxPocetHracov], kontrola;
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex,NULL);
-    pthread_barrier_t cakajHracov;
-    pthread_barrier_init(&cakajHracov,NULL,maxPocetHracov);
-
-    SERVERD servD = {0, maxPocetHracov, 0, menoVyhercu, 0, zacinajuci, mapa, velkostMapy, infoVyhry, &cakajHracov, &mutex};
-    HRACD * hraciD = malloc(maxPocetHracov * sizeof(HRACD));
-
-    printf("Caka sa na %d hracov...\n",servD.maximalnyPocHracov);
-
-    // Pthread 'create' / 'join'
-    for (int i = 0; i < maxPocetHracov; i++) {
-        hraciD[i].idHraca = i;
-        hraciD[i].sockfd = sockfd;
-        hraciD[i].infoHraca = infoHraca;
-        hraciD[i].infoHry = infoHry;
-        hraciD[i].okInfo = okInfo;
-        hraciD[i].spoluD = &servD;
-        pthread_create(&hraci[i], NULL, hraciFun, &hraciD[i]);
-    }
-
-
-    for (int i = 0; i < maxPocetHracov; i++) {
-        pthread_join(hraci[i], NULL);
-    }
-
-
-
-
-
-    printf("------------------------------------------------------\n");
-    printf("Server Skoncil\n");
-    printf("------------------------------------------------------\n\n");
-    close(sockfd);
 
     return 0;
-}*/
+}
+int server() {
+    SERVER  serverInfo;
+    serverInfo.port = 30303;
+    printf("Server bol spusteny\n");
+    socklen_t client_addr_len;
+    pthread_t thread;
+
+    //vytvorenie TCP socketu <sys/socket.h>
+    int client_sock;
+    initServerSocket(&serverInfo);
+    //definovanie adresy servera <arpa/inet.h>
+    struct sockaddr_in serverAddress,client_addr;;
+    serverAddress.sin_family = AF_INET;         //internetove sockety
+    serverAddress.sin_addr.s_addr = INADDR_ANY; //prijimame spojenia z celeho internetu
+    serverAddress.sin_port = htons(serverInfo.port);       //nastavenie portu
+
+    //prepojenie adresy servera so socketom <sys/socket.h>
+    if (bind(serverInfo.serverSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) < 0) {
+        perror("Chyba - bind.");
+    }
+
+    if (listen(serverInfo.serverSocket, PLAYERS_MAX) < 0) {
+        perror("listen");
+        exit(EXIT_FAILURE);
+    }
+    while (1) {
+        client_addr_len = sizeof(client_addr);
+        client_sock = accept(serverInfo.serverSocket, (struct sockaddr *)&client_addr, &client_addr_len);
+        if (client_sock < 0) {
+            perror("accept failed");
+            return 1;
+        }
+        printf("Novy klient sa pripojil %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+        if (pthread_create(&thread, NULL, client_handler, &client_sock) != 0) {
+            perror("pthread_create failed");
+            return 1;
+        }
+    }
+}
+
+void * client_handler(void * arg) {
+    int sockfd = *(int *)arg;
+    char  buf[100];
+    recv(sockfd,buf,99,0);
+    send(sockfd,"borec",6,0);
+    printf("%s\n", buf);
+
+    return NULL;
+}
+
+
+void* consume(void* thread_data) {
+    struct thread_data* data = (struct thread_data*)thread_data;
+
+
+    return NULL;
+}
+

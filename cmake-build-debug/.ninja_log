@@ -1,11 +1,11 @@
 # ninja log v5
-2	145	7260706095176060	CMakeFiles/POS.dir/main.c.obj	63e22d830de4ea85
-0	117	7260739594654680	build.ninja	ba9decfa2a9de794
-7	83	7260704300856904	CMakeFiles/POS.dir/client.c.obj	379603860c98fe47
+27	211	7261568581336114	CMakeFiles/POS.dir/client.c.obj	379603860c98fe47
+1	107	7261570418824289	build.ninja	ba9decfa2a9de794
+2	1487	7261568996514870	CMakeFiles/POS.dir/main.c.obj	63e22d830de4ea85
 146	365	7260706097315677	POS.exe	1730ffc4b5d16375
-11	92	7260704300966895	CMakeFiles/POS.dir/server.c.obj	c1d79dd519233682
-1	136	7260704301408931	CMakeFiles/POS.dir/terminal_display.c.obj	b71a7165a4faf162
-22	274	7260739659049450	CMakeFiles/POS.dir/client.c.obj	379603860c98fe47
-37	278	7260739659049450	CMakeFiles/POS.dir/server.c.obj	c1d79dd519233682
-0	496	7260739661330934	CMakeFiles/POS.dir/main.c.obj	63e22d830de4ea85
-7	521	7260739661350639	CMakeFiles/POS.dir/terminal_display.c.obj	b71a7165a4faf162
+6	1430	7261568995957623	CMakeFiles/POS.dir/terminal_display.c.obj	b71a7165a4faf162
+11	1385	7261568995495820	CMakeFiles/POS.dir/server.c.obj	c1d79dd519233682
+22	116	7261568982819984	CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.obj	1785afe42c239359
+18	912	7261568588339747	CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.obj	1b8a163a1bd80601
+27	1403	7261568995677181	CMakeFiles/POS.dir/klient/my_socket.c.obj	a32534485e79a370
+3	925	7261569925033492	CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.obj	8d3149f4195fc28c

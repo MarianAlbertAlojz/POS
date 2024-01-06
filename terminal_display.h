@@ -43,6 +43,7 @@ void initGame(GAME * game, TIMER * game_Timer, TERMINAL_UI * game_TerminalPrint)
 void initTimer(TIMER * game_Timer);
 void * timerThread(void * arg);
 void createBoard(TERMINAL_UI *terminalPrint);
+void freeBoard(TERMINAL_UI *terminalPrint);
 void createBoardClient_1(TERMINAL_UI * terminalPrint);
 void createBoardClient_2(TERMINAL_UI * terminalPrint);
 void printOnlyVerticalSection(int size);

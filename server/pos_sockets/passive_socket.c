@@ -1,14 +1,14 @@
 #include "passive_socket.h"
 #include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+//#include <sys/socket.h>
+//#include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-
-#define INVALID_SOCKET -1
+#include "../../libraries.h"
+//#define INVALID_SOCKET -1
 
 void passive_socket_init(struct passive_socket* self) {
-    self->socket_descriptor = INVALID_SOCKET;
+    self->socket_descriptor = SOCKET_ERROR;
     self->is_listening = false;
     self->is_waiting = false;
     pthread_mutex_init(&self->mutex, NULL);
@@ -19,7 +19,7 @@ void passive_socket_destroy(struct passive_socket* self) {
     if (self->socket_descriptor >= 0) {
         close(self->socket_descriptor);
     }
-    self->socket_descriptor = INVALID_SOCKET;
+    self->socket_descriptor = SOCKET_ERROR;
     self->is_listening = false;
     self->is_waiting = false;
     pthread_mutex_destroy(&self->mutex);
@@ -75,7 +75,7 @@ void passive_socket_stop_listening(struct passive_socket* self) {
         pthread_cond_wait(&self->waiting_finished, &self->mutex);
     }
     close(self->socket_descriptor);
-    self->socket_descriptor = INVALID_SOCKET;
+    self->socket_descriptor = SOCKET_ERROR;
     pthread_mutex_unlock(&self->mutex);
 }
 

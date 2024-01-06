@@ -5,14 +5,8 @@
 #include "server/pos_sockets/char_buffer.h"
 #include "server/pos_sockets/active_socket.h"
 #include "server/buffer.h"
-typedef struct thread_data {
-    pthread_mutex_t mutex;
-    pthread_cond_t is_full;
-    pthread_cond_t is_empty;
-
-    short port;
-    ACTIVE_SOCKET* my_socket;
-} THREAD_DATA;
+#include "server.h"
+#include "client.h"
 /*
  * Tu  bude logika od Andreja,teda pohyb hore,dolu,vpravo,vlavo
  * premysliet:
@@ -307,22 +301,7 @@ void * timerThread(void * arg) {
     return NULL;
 }
 
-void* process_client_data(void* thread_data) {
-    THREAD_DATA *data = (THREAD_DATA *)thread_data;
-    PASSIVE_SOCKET p_socket;
-    passive_socket_init(&p_socket);
-    passive_socket_start_listening(&p_socket, data->port);
-    passive_socket_wait_for_client(&p_socket, data->my_socket);
 
-    printf("connected1\n");
-    passive_socket_wait_for_client(&p_socket, data->my_socket);
-    printf("connected2\n");
-    passive_socket_stop_listening(&p_socket);
-    passive_socket_destroy(&p_socket);
-
-    active_socket_start_reading(data->my_socket);
-    return NULL;
-}
 /*
  * Tu  bude riesenie socketov na ktorom budeme robit pravdepodobne obaja
  * premysliet:
@@ -338,19 +317,13 @@ void* process_client_data(void* thread_data) {
  *
  * */
 
-int main() {
-    pthread_t th_produce;
-    pthread_t th_receive;
-    struct active_socket my_socket;
-    struct thread_data data;
-    active_socket_init(&my_socket);
-    data.port = 10001;
-    data.my_socket = &my_socket;
-    printf("spusti");
-    pthread_create(&th_receive, NULL, process_client_data, &data);
-    pthread_join(th_receive, NULL);
+int main(int argc, char * argv[]) {
+   if (strcmp(argv[1],"server") == 0){
+        printf("Jozef\n");
+        server();
+   }
 
-    active_socket_destroy(&my_socket);
+
     /* GAME game;
     BOARD celepole;
     TERMINAL_UI game_TerminalPrint;
@@ -406,7 +379,7 @@ int main() {
          fprintf(stderr, "Error creating timer thread.\n");
          return EXIT_FAILURE;
      }*/
-
+    return 0;
 }
 
 /*
@@ -427,7 +400,7 @@ void initGameSettings(GAME *game, TIMER *game_Timer, enum SIZE_MODE gameSize, en
 
 void initGame(GAME *game, TIMER *game_Timer, TERMINAL_UI *game_TerminalPrint) {
     game->game_ConnectedPlayers = 0;
-    game->game_MaxPlayers = PLAYERS_MAX;
+
     game->game_Timer = game_Timer;
     game->game_TerminalPrint = game_TerminalPrint;
     //calloc pre server player
@@ -442,11 +415,11 @@ void initTimer(TIMER * game_Timer) {
 }
 
 void initPlayers(GAME * game, char player1Name[MAX_NAME_LENGTH], char player2Name[MAX_NAME_LENGTH]) {
-    strcpy(game->players[CLIENT_1].name, "marianalb");
+    strcpy(game->players[CLIENT_1].name, player1Name);
     game->players[CLIENT_1].playerMove = 10;
     game->players[CLIENT_1].score = 1000000;
     game->players[CLIENT_1].playerBoard = game->game_TerminalPrint->boardClient_1;
-    strcpy(game->players[CLIENT_2].name, "vajco");
+    strcpy(game->players[CLIENT_2].name, player2Name);
     game->players[CLIENT_2].playerMove = 20;
     game->players[CLIENT_2].score = 2000000;
     game->players[CLIENT_2].playerBoard = game->game_TerminalPrint->boardClient_2;

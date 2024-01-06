@@ -19,5 +19,7 @@ add_executable(POS main.c
         server/pos_sockets/char_buffer.c
         server/pos_sockets/char_buffer.h
         server/buffer.h
+        klient/my_socket.h
+        klient/my_socket.c
 )
 target_link_libraries(POS pthread)

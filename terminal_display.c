@@ -50,6 +50,14 @@ void createBoard(TERMINAL_UI * terminalPrint)
     createBoardClient_2(terminalPrint);
 }
 
+void freeBoard(TERMINAL_UI * terminalPrint) {
+    for (int i = 0; i < terminalPrint->boardSize; ++i) {
+        free(terminalPrint->boardClient_1.policka[i]);
+        free(terminalPrint->boardClient_2.policka[i]);
+    }
+    free(terminalPrint->boardClient_1.policka);
+    free(terminalPrint->boardClient_2.policka);
+}
 
 void createBoardClient_1(TERMINAL_UI *terminalPrint) {
     terminalPrint->boardClient_1.policka = ((FIELD **) calloc(terminalPrint->boardSize, sizeof(FIELD *)));

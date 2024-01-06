@@ -65,7 +65,6 @@ typedef struct timer {
 typedef struct game {
     PLAYER players[PLAYERS_MAX];
     uint8_t game_ConnectedPlayers;
-    uint8_t game_MaxPlayers;
     uint8_t game_MaxPlayerMoves;
     enum SIZE_MODE game_Size;
     TIMER * game_Timer;
