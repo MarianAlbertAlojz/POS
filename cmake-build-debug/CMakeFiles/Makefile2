@@ -72,7 +72,7 @@ CMAKE_BINARY_DIR = /tmp/tmp.p9WanbUdMo/cmake-build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/POSclient.dir/all
+all: CMakeFiles/POS.dir/all
 
 .PHONY : all
 
@@ -82,36 +82,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/POSclient.dir/clean
+clean: CMakeFiles/POS.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/POSclient.dir
+# Target rules for target CMakeFiles/POS.dir
 
 # All Build rule for target.
-CMakeFiles/POSclient.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POSclient.dir/build.make CMakeFiles/POSclient.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POSclient.dir/build.make CMakeFiles/POSclient.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target POSclient"
-.PHONY : CMakeFiles/POSclient.dir/all
+CMakeFiles/POS.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target POS"
+.PHONY : CMakeFiles/POS.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/POSclient.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles 9
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/POSclient.dir/all
+CMakeFiles/POS.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/POS.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/POSclient.dir/rule
+.PHONY : CMakeFiles/POS.dir/rule
 
 # Convenience name for target.
-POSclient: CMakeFiles/POSclient.dir/rule
+POS: CMakeFiles/POS.dir/rule
 
-.PHONY : POSclient
+.PHONY : POS
 
 # clean rule for target.
-CMakeFiles/POSclient.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POSclient.dir/build.make CMakeFiles/POSclient.dir/clean
-.PHONY : CMakeFiles/POSclient.dir/clean
+CMakeFiles/POS.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/clean
+.PHONY : CMakeFiles/POS.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

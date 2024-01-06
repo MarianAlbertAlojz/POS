@@ -250,60 +250,6 @@ server/pos_sockets/active_socket.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.s
 .PHONY : server/pos_sockets/active_socket.c.s
 
-server/pos_sockets/char_buffer.o: server/pos_sockets/char_buffer.c.o
-
-.PHONY : server/pos_sockets/char_buffer.o
-
-# target to build an object file
-server/pos_sockets/char_buffer.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o
-.PHONY : server/pos_sockets/char_buffer.c.o
-
-server/pos_sockets/char_buffer.i: server/pos_sockets/char_buffer.c.i
-
-.PHONY : server/pos_sockets/char_buffer.i
-
-# target to preprocess a source file
-server/pos_sockets/char_buffer.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.i
-.PHONY : server/pos_sockets/char_buffer.c.i
-
-server/pos_sockets/char_buffer.s: server/pos_sockets/char_buffer.c.s
-
-.PHONY : server/pos_sockets/char_buffer.s
-
-# target to generate assembly for a file
-server/pos_sockets/char_buffer.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.s
-.PHONY : server/pos_sockets/char_buffer.c.s
-
-server/pos_sockets/passive_socket.o: server/pos_sockets/passive_socket.c.o
-
-.PHONY : server/pos_sockets/passive_socket.o
-
-# target to build an object file
-server/pos_sockets/passive_socket.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o
-.PHONY : server/pos_sockets/passive_socket.c.o
-
-server/pos_sockets/passive_socket.i: server/pos_sockets/passive_socket.c.i
-
-.PHONY : server/pos_sockets/passive_socket.i
-
-# target to preprocess a source file
-server/pos_sockets/passive_socket.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.i
-.PHONY : server/pos_sockets/passive_socket.c.i
-
-server/pos_sockets/passive_socket.s: server/pos_sockets/passive_socket.c.s
-
-.PHONY : server/pos_sockets/passive_socket.s
-
-# target to generate assembly for a file
-server/pos_sockets/passive_socket.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.s
-.PHONY : server/pos_sockets/passive_socket.c.s
-
 terminal_display.o: terminal_display.c.o
 
 .PHONY : terminal_display.o
@@ -352,12 +298,6 @@ help:
 	@echo "... server/pos_sockets/active_socket.o"
 	@echo "... server/pos_sockets/active_socket.i"
 	@echo "... server/pos_sockets/active_socket.s"
-	@echo "... server/pos_sockets/char_buffer.o"
-	@echo "... server/pos_sockets/char_buffer.i"
-	@echo "... server/pos_sockets/char_buffer.s"
-	@echo "... server/pos_sockets/passive_socket.o"
-	@echo "... server/pos_sockets/passive_socket.i"
-	@echo "... server/pos_sockets/passive_socket.s"
 	@echo "... terminal_display.o"
 	@echo "... terminal_display.i"
 	@echo "... terminal_display.s"

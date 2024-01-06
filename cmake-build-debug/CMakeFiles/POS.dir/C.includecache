@@ -6,8 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/tmp/tmp.p9WanbUdMo/client.h
-
 /tmp/tmp.p9WanbUdMo/libraries.h
 stdio.h
 -
@@ -39,16 +37,6 @@ server/pos_sockets/active_socket.h
 /tmp/tmp.p9WanbUdMo/server/pos_sockets/active_socket.h
 server/buffer.h
 /tmp/tmp.p9WanbUdMo/server/buffer.h
-server.h
-/tmp/tmp.p9WanbUdMo/server.h
-client.h
-/tmp/tmp.p9WanbUdMo/client.h
-
-/tmp/tmp.p9WanbUdMo/server.h
-libraries.h
-/tmp/tmp.p9WanbUdMo/libraries.h
-server/pos_sockets/active_socket.h
-/tmp/tmp.p9WanbUdMo/server/pos_sockets/active_socket.h
 
 /tmp/tmp.p9WanbUdMo/server/buffer.h
 stdbool.h

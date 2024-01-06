@@ -94,25 +94,10 @@
 		<Unit filename="/tmp/tmp.p9WanbUdMo/server.h">
 			<Option target="POS"/>
 		</Unit>
-		<Unit filename="/tmp/tmp.p9WanbUdMo/server/buffer.h">
-			<Option target="POS"/>
-		</Unit>
 		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/active_socket.c">
 			<Option target="POS"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/active_socket.h">
-			<Option target="POS"/>
-		</Unit>
-		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/char_buffer.c">
-			<Option target="POS"/>
-		</Unit>
-		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/char_buffer.h">
-			<Option target="POS"/>
-		</Unit>
-		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/passive_socket.c">
-			<Option target="POS"/>
-		</Unit>
-		<Unit filename="/tmp/tmp.p9WanbUdMo/server/pos_sockets/passive_socket.h">
 			<Option target="POS"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.p9WanbUdMo/shared.h">

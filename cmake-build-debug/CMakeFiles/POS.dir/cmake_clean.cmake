@@ -1,11 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/POS.dir/client.c.o"
-  "CMakeFiles/POS.dir/klient/my_socket.c.o"
   "CMakeFiles/POS.dir/main.c.o"
   "CMakeFiles/POS.dir/server.c.o"
   "CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o"
-  "CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o"
-  "CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o"
   "CMakeFiles/POS.dir/terminal_display.c.o"
   "POS"
   "POS.pdb"

@@ -1,4 +1,7 @@
 /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /tmp/tmp.p9WanbUdMo -B /tmp/tmp.p9WanbUdMo/cmake-build-debug
--- Configuring done
--- Generating done
--- Build files have been written to: /tmp/tmp.p9WanbUdMo/cmake-build-debug
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  CMake 3.27 or higher is required.  You are running version 3.18.4
+
+
+-- Configuring incomplete, errors occurred!
+See also "/tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles/CMakeOutput.log".
