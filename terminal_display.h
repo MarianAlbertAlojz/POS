@@ -5,20 +5,11 @@
 
 #ifndef POS_TERMINAL_DISPLAY_H
 #define POS_TERMINAL_DISPLAY_H
+
 #include "shared.h"
 
 #define MAX_NUMBER_LENGTH 5
 #define NULL_CHAR_LENGTH 1
-#define BUFFER_LENGTH 301
-#define GAME_SIZE_MIN 3
-#define GAME_SIZE_MAX 9
-
-// definicie pre nastavenie hry
-#define MAX_PLAYER_MOVES
-//server.h
-
-#define CONVERT_TO_SECOND 60
-//client.h
 
 static char seprator_symbol = ';';
 static char empty[] = "     ";
@@ -26,17 +17,8 @@ static char emptyLonger[] = "                    ";
 static char vertical = '|';
 static char horizontal[] = "-----";
 
-
-
-typedef struct field {
-    int value;
-}FIELD;
-
-typedef struct board {
-    FIELD ** policka;
-}BOARD;
-
 typedef struct terminalDisplay {
+    BOARD boardClients[PLAYERS_MAX];
     BOARD boardClient_1;
     BOARD boardClient_2;
     uint8_t boardSize;
@@ -53,8 +35,8 @@ typedef struct game_terminal {
 void initGameSettings(GAME_TERMINAL *game,TERMINAL_UI *game_TerminalPrint ,int gameSize,int gameMove,int gameTimer);
 void createBoard(TERMINAL_UI *terminalPrint);
 void freeBoard(TERMINAL_UI *terminalPrint);
-void createBoardClient_1(TERMINAL_UI * terminalPrint);
-void createBoardClient_2(TERMINAL_UI * terminalPrint);
+void createBoardHost(TERMINAL_UI * terminalPrint);
+void createBoardClient(TERMINAL_UI * terminalPrint);
 void printOnlyVerticalSection(int size);
 void printMiddleSection(const int size, const int row);
 void printSymbolSection(const TERMINAL_UI board, const int row);

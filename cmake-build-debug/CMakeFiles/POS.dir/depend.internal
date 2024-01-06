@@ -5,38 +5,22 @@ CMakeFiles/POS.dir/client.c.o
  /tmp/tmp.nIs1zjQsfW/client.c
  /tmp/tmp.nIs1zjQsfW/client.h
  /tmp/tmp.nIs1zjQsfW/libraries.h
-CMakeFiles/POS.dir/klient/my_socket.c.o
- /tmp/tmp.nIs1zjQsfW/klient/my_socket.c
- /tmp/tmp.nIs1zjQsfW/klient/my_socket.h
+ /tmp/tmp.nIs1zjQsfW/shared.h
+ /tmp/tmp.nIs1zjQsfW/terminal_display.h
 CMakeFiles/POS.dir/main.c.o
- /tmp/tmp.nIs1zjQsfW/client.h
  /tmp/tmp.nIs1zjQsfW/libraries.h
  /tmp/tmp.nIs1zjQsfW/main.c
- /tmp/tmp.nIs1zjQsfW/server.h
+ /tmp/tmp.nIs1zjQsfW/server/buffer.h
+ /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.h
+ /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.h
+ /tmp/tmp.nIs1zjQsfW/server/pos_sockets/linked_list.h
+ /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.h
  /tmp/tmp.nIs1zjQsfW/shared.h
  /tmp/tmp.nIs1zjQsfW/terminal_display.h
 CMakeFiles/POS.dir/server.c.o
- /tmp/tmp.nIs1zjQsfW/libraries.h
  /tmp/tmp.nIs1zjQsfW/server.c
  /tmp/tmp.nIs1zjQsfW/server.h
- /tmp/tmp.nIs1zjQsfW/shared.h
-CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.c
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/linked_list.h
-CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.c
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.h
-CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o
- /tmp/tmp.nIs1zjQsfW/libraries.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/linked_list.h
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.c
- /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.h
 CMakeFiles/POS.dir/terminal_display.c.o
- /tmp/tmp.nIs1zjQsfW/client.h
  /tmp/tmp.nIs1zjQsfW/libraries.h
  /tmp/tmp.nIs1zjQsfW/shared.h
  /tmp/tmp.nIs1zjQsfW/terminal_display.c

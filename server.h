@@ -4,14 +4,27 @@
 
 #ifndef POS_SERVER_H
 #define POS_SERVER_H
-#include "libraries.h"
-#include "shared.h"
 
+#include "shared.h"
+#include "server.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <string.h>
+#include <netinet/in.h>
+#include <time.h>
 
 typedef struct threadData {
     bool start;
     bool koniec;
     pthread_mutex_t mutex;
+    pthread_cond_t pokracuj;
 } THREAD_DATA;
 
 
@@ -25,8 +38,8 @@ typedef struct player {
     int playerSock;
     int id;
     char data[100];
-    char msg[256];
-    THREAD_DATA threadData;
+    char msg[BUFFER_LENGTH];
+    THREAD_DATA * threadData;
 } PLAYER;
 
 
@@ -39,7 +52,7 @@ typedef struct game {
     uint8_t game_ConnectedPlayers;
     uint8_t game_MaxPlayerMoves;
     enum SIZE_MODE game_Size;
-    THREAD_DATA threadData;
+    THREAD_DATA * threadData;
 }GAME;
 
 typedef struct server {

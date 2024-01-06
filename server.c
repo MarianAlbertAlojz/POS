@@ -1,6 +1,5 @@
 
 #include "server.h"
-#include "libraries.h"
 
 bool receiveMsg_Server (int sockfd, char* buffer) {
     bzero(buffer,256);
@@ -25,32 +24,23 @@ bool sendMsg_Server (int sockfd, char* buffer) {
 
 void* hracF (void *arg) {
     PLAYER *player = arg;
+    player->threadData->start = true;
 
-    struct sockaddr_in cli_addr;
-    socklen_t cli_len = sizeof(cli_addr);
-    player->playerSock = accept(player->serverSock, (struct sockaddr*)&cli_addr, &cli_len); // akceptovanie klienta
-    if (player->playerSock < 0)
-    {
-        perror("ERROR on accept");
-        return NULL;
-    }
+    pthread_mutex_lock(&player->threadData->mutex);
+    pthread_cond_wait(&player->threadData->pokracuj,&player->threadData->mutex);
 
-    player->threadData.start = true;
-
-    pthread_mutex_lock(&player->threadData.mutex);
     receiveMsg_Server(player->playerSock,player->data);
-    sendMsg_Server(player->playerSock, "start\0");
-    pthread_mutex_unlock(&player->threadData.mutex);
-
-    while (strcmp(player->msg, "koniec\0") != 0) {
-        pthread_mutex_lock(&player->threadData.mutex);
+    pthread_mutex_unlock(&player->threadData->mutex);
+    printf("nie som v slucke\n");
+    while (strcmp(player->msg, "k\0") != 0) {
+        pthread_mutex_lock(&player->threadData->mutex);
         receiveMsg_Server(player->playerSock, player->msg);
-        printf("HRAC %d: %s\n", player->id, player->msg);
-        pthread_mutex_unlock(&player->threadData.mutex);
+        printf("HRAC sa odpojil hra skoncila %d: %s\n", player->id, player->msg);
+        pthread_mutex_unlock(&player->threadData->mutex);
     }
-    pthread_mutex_lock(&player->threadData.mutex);
-    player->threadData.koniec = true;
-    pthread_mutex_unlock(&player->threadData.mutex);
+    pthread_mutex_lock(&player->threadData->mutex);
+    player->threadData->koniec = true;
+    pthread_mutex_unlock(&player->threadData->mutex);
 
     close(player->playerSock);
     return NULL;
@@ -58,33 +48,44 @@ void* hracF (void *arg) {
 
 void* timeF (void *arg) {
     GAME *game = arg;
-    while (!game->players[0].threadData.start || !game->players[1].threadData.start) {
+    while (!game->players[0].threadData->start || !game->players[1].threadData->start) {
 
     }
-    while (!game->players[0].threadData.koniec && !game->players[1].threadData.koniec) {
+    pthread_mutex_lock(&game->threadData->mutex);
+    sendMsg_Server(game->players[0].playerSock, "host");
+    sendMsg_Server(game->players[1].playerSock, "klient");
+    receiveMsg_Server(game->players[0].playerSock,game->players[0].msg);
+    printf("%s\n", game->players[0].msg);
+    sendMsg_Server(game->players[0].playerSock,"zobrazH");
+    sendMsg_Server(game->players[1].playerSock,"zobrazC");
+    receiveMsg_Server(game->players[1].playerSock,game->players[1].msg);
+    sendMsg_Server(game->players[1].playerSock,game->players[0].msg);
+    pthread_cond_signal(&game->threadData->pokracuj);
+    pthread_mutex_unlock(&game->threadData->mutex);
+
+    while (!game->players[0].threadData->koniec && !game->players[1].threadData->koniec) {
         if (game->time == 0) {
             printf("SERVER: cas vyprsal!\n");
-            pthread_mutex_lock(&game->threadData.mutex);
-            game->players[0].threadData.koniec = true;
-            pthread_mutex_unlock(&game->threadData.mutex);
+            pthread_mutex_lock(&game->threadData->mutex);
+            game->players[0].threadData->koniec = true;
+            pthread_mutex_unlock(&game->threadData->mutex);
         } else {
             printf("SERVER: zostavajuci cas: %d\n", game->time);
-            pthread_mutex_lock(&game->threadData.mutex);
+            pthread_mutex_lock(&game->threadData->mutex);
             sprintf(game->players[0].data, "%d", game->time);
             sprintf(game->players[1].data, "%d", game->time);
-            printf("%s\n", game->players[0].data);
             sendMsg_Server(game->players[0].playerSock, game->players[0].data);
-            sendMsg_Server(game->players[1].playerSock, game->players[0].data);
-            pthread_mutex_unlock(&game->threadData.mutex);
+            sendMsg_Server(game->players[1].playerSock, game->players[1].data);
+            pthread_mutex_unlock(&game->threadData->mutex);
         }
         game->time--;
         sleep(1);
     }
 
-    pthread_mutex_lock(&game->threadData.mutex);
-    sendMsg_Server(game->players[0].playerSock, "koniec\0");
-    sendMsg_Server(game->players[1].playerSock, "koniec\0");
-    pthread_mutex_unlock(&game->threadData.mutex);
+    pthread_mutex_lock(&game->threadData->mutex);
+    sendMsg_Server(game->players[0].playerSock, "k\0");
+    sendMsg_Server(game->players[1].playerSock, "k\0");
+    pthread_mutex_unlock(&game->threadData->mutex);
 
     return NULL;
 }
@@ -98,7 +99,7 @@ int server()
     bzero((char*)&serv_addr, sizeof(serv_addr)); // inicializacia sietovej adresy
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(10003);
+    serv_addr.sin_port = htons(18488);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // vytvorenie socketu
     if (sockfd < 0)
@@ -113,7 +114,10 @@ int server()
         return 2;
     }
 
-    listen(sockfd, PLAYERS_MAX); // prijimanie klientov
+    if (listen(sockfd, PLAYERS_MAX) < 0) {
+        perror("listen");
+        exit(EXIT_FAILURE);
+    } // prijimanie klien tov
 
     printf("SERVER: cakam na pripojenie hracov!\n");
 
@@ -121,12 +125,12 @@ int server()
     threadData.start = false;
     threadData.koniec = false;
     pthread_mutex_init(&threadData.mutex,NULL);
-
+    pthread_cond_init(&threadData.pokracuj,NULL);
     PLAYER playerData[2];
     for (int i = 0; i < 2; ++i) {
         playerData[i].id = i;
         playerData[i].serverSock = sockfd;
-        playerData[i].threadData = threadData;
+        playerData[i].threadData = &threadData;
     }
 
     GAME gameData;
@@ -136,10 +140,21 @@ int server()
         gameData.board[i] = (int*)calloc(5, sizeof(int));
     }
     gameData.players = playerData;
-    gameData.threadData = threadData;
+    gameData.threadData = &threadData;
 
     pthread_t players[2];
     pthread_t timer;
+    struct sockaddr_in cli_addr;
+    socklen_t cli_len = sizeof(cli_addr);
+
+    for (int i = 0; i < 2; ++i) {
+        playerData[i].playerSock = accept(sockfd, (struct sockaddr*)&cli_addr, &cli_len);
+        if (playerData[i].playerSock < 0)
+        {
+            perror("ERROR on accept");
+            return 1;
+        }
+    }
     for (int i = 0; i < 2; ++i) {
         pthread_create(&players[i], NULL, hracF, &playerData[i]);
     }

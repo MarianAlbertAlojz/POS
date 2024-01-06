@@ -18,12 +18,12 @@ int countNumberDigits(FIELD * policko){
     return length;
 }
 
-void printSymbolFix(const TERMINAL_UI terminalPrint, const int row, const int column, bool boardClient_1) {
+void printSymbolFix(const TERMINAL_UI terminalPrint, const int row, const int column, enum ROLE role) {
     FIELD field;
-    if (boardClient_1) {
-        field = terminalPrint.boardClient_1.policka[row][column];
+    if (role == HOST) {
+        field = terminalPrint.boardClients[HOST].policka[row][column];
     } else {
-        field = terminalPrint.boardClient_2.policka[row][column];
+        field = terminalPrint.boardClients[CLIENT].policka[row][column];
     }
 
     switch (countNumberDigits(&field)) {
@@ -46,39 +46,39 @@ void printSymbolFix(const TERMINAL_UI terminalPrint, const int row, const int co
 }
 void createBoard(TERMINAL_UI * terminalPrint)
 {
-    createBoardClient_1(terminalPrint);
-    createBoardClient_2(terminalPrint);
+    createBoardHost(terminalPrint);
+    createBoardClient(terminalPrint);
 }
 
 void freeBoard(TERMINAL_UI * terminalPrint) {
     for (int i = 0; i < terminalPrint->boardSize; ++i) {
-        free(terminalPrint->boardClient_1.policka[i]);
-        free(terminalPrint->boardClient_2.policka[i]);
+        free(terminalPrint->boardClients[CLIENT].policka[i]);
+        free(terminalPrint->boardClients[HOST].policka[i]);
     }
-    free(terminalPrint->boardClient_1.policka);
-    free(terminalPrint->boardClient_2.policka);
+    free(terminalPrint->boardClients[CLIENT].policka);
+    free(terminalPrint->boardClients[HOST].policka);
 }
 
-void createBoardClient_1(TERMINAL_UI *terminalPrint) {
-    terminalPrint->boardClient_1.policka = ((FIELD **) calloc(terminalPrint->boardSize, sizeof(FIELD *)));
+void createBoardHost(TERMINAL_UI *terminalPrint) {
+    terminalPrint->boardClients[HOST].policka = ((FIELD **) calloc(terminalPrint->boardSize, sizeof(FIELD *)));
     for (int i = 0; i < terminalPrint->boardSize; ++i) {
-        terminalPrint->boardClient_1.policka[i] = (FIELD *) calloc((terminalPrint->boardSize), sizeof(FIELD));
+        terminalPrint->boardClients[HOST].policka[i] = (FIELD *) calloc((terminalPrint->boardSize), sizeof(FIELD));
     }
     for (int riadok = 0; riadok < terminalPrint->boardSize; ++riadok) {
         for (int stlpec = 0; stlpec < terminalPrint->boardSize; ++stlpec) {
-            terminalPrint->boardClient_1.policka[riadok][stlpec].value = 0;
+            terminalPrint->boardClients[HOST].policka[riadok][stlpec].value = 0;
         }
     }
 }
 
-void createBoardClient_2(TERMINAL_UI *terminalPrint) {
-    terminalPrint->boardClient_2.policka = ((FIELD **) calloc(terminalPrint->boardSize, sizeof(FIELD *)));
+void createBoardClient(TERMINAL_UI *terminalPrint) {
+    terminalPrint->boardClients[CLIENT].policka = ((FIELD **) calloc(terminalPrint->boardSize, sizeof(FIELD *)));
     for (int i = 0; i < terminalPrint->boardSize; ++i) {
-        terminalPrint->boardClient_2.policka[i] = (FIELD *) calloc((terminalPrint->boardSize), sizeof(FIELD));
+        terminalPrint->boardClients[CLIENT].policka[i] = (FIELD *) calloc((terminalPrint->boardSize), sizeof(FIELD));
     }
     for (int riadok = 0; riadok < terminalPrint->boardSize; ++riadok) {
         for (int stlpec = 0; stlpec < terminalPrint->boardSize; ++stlpec) {
-            terminalPrint->boardClient_2.policka[riadok][stlpec].value = 0;
+            terminalPrint->boardClients[CLIENT].policka[riadok][stlpec].value = 0;
         }
     }
 }
@@ -109,11 +109,11 @@ void printEmptyVertical(const int size)
     }
 }
 
-void printSymbol(const TERMINAL_UI terminalPrint, const int row, bool boardClient_1)
+void printSymbol(const TERMINAL_UI terminalPrint, const int row, enum ROLE role)
 {
     for (int column = 0; column < terminalPrint.boardSize; ++column)
     {
-        printSymbolFix(terminalPrint, row, column, boardClient_1);
+        printSymbolFix(terminalPrint, row, column, role);
         if(column != terminalPrint.boardSize - 1){
             printf("%c",vertical);
         }
@@ -146,9 +146,9 @@ void printSymbolSection(const TERMINAL_UI terminalPrint, const int row)
     if(row == terminalPrint.boardSize - 1) {
         printf("\n");
     }
-    printSymbol(terminalPrint,row, true);//boardClient_1 == true znaci ci to je board clienta 1, v tomto pripade true
+    printSymbol(terminalPrint,row, HOST);//boardClient_1 == true znaci ci to je board clienta 1, v tomto pripade true
     printBlankSectionWithMessage(terminalPrint.boardSize);
-    printSymbol(terminalPrint,row, false);//boardClient_1 == false znaci ci to je board clienta 1, v tomto pripade false a teda vieme ze to je board clienta 2 lebo mame len dva boardy
+    printSymbol(terminalPrint,row, CLIENT);//boardClient_1 == false znaci ci to je board clienta 1, v tomto pripade false a teda vieme ze to je board clienta 2 lebo mame len dva boardy
     if(row != terminalPrint.boardSize - 1) {
         printf("\n");
     }

@@ -128,68 +128,12 @@ CMakeFiles/POS.dir/server.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/POS.dir/server.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /tmp/tmp.nIs1zjQsfW/server.c -o CMakeFiles/POS.dir/server.c.s
 
-CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o: CMakeFiles/POS.dir/flags.make
-CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o: ../server/pos_sockets/active_socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o -c /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.c
-
-CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.c > CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.i
-
-CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /tmp/tmp.nIs1zjQsfW/server/pos_sockets/active_socket.c -o CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.s
-
-CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o: CMakeFiles/POS.dir/flags.make
-CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o: ../server/pos_sockets/passive_socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o -c /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.c
-
-CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.c > CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.i
-
-CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /tmp/tmp.nIs1zjQsfW/server/pos_sockets/passive_socket.c -o CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.s
-
-CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o: CMakeFiles/POS.dir/flags.make
-CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o: ../server/pos_sockets/char_buffer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o -c /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.c
-
-CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.c > CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.i
-
-CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /tmp/tmp.nIs1zjQsfW/server/pos_sockets/char_buffer.c -o CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.s
-
-CMakeFiles/POS.dir/klient/my_socket.c.o: CMakeFiles/POS.dir/flags.make
-CMakeFiles/POS.dir/klient/my_socket.c.o: ../klient/my_socket.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/POS.dir/klient/my_socket.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/POS.dir/klient/my_socket.c.o -c /tmp/tmp.nIs1zjQsfW/klient/my_socket.c
-
-CMakeFiles/POS.dir/klient/my_socket.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/POS.dir/klient/my_socket.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /tmp/tmp.nIs1zjQsfW/klient/my_socket.c > CMakeFiles/POS.dir/klient/my_socket.c.i
-
-CMakeFiles/POS.dir/klient/my_socket.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/POS.dir/klient/my_socket.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /tmp/tmp.nIs1zjQsfW/klient/my_socket.c -o CMakeFiles/POS.dir/klient/my_socket.c.s
-
 # Object files for target POS
 POS_OBJECTS = \
 "CMakeFiles/POS.dir/main.c.o" \
 "CMakeFiles/POS.dir/terminal_display.c.o" \
 "CMakeFiles/POS.dir/client.c.o" \
-"CMakeFiles/POS.dir/server.c.o" \
-"CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o" \
-"CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o" \
-"CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o" \
-"CMakeFiles/POS.dir/klient/my_socket.c.o"
+"CMakeFiles/POS.dir/server.c.o"
 
 # External object files for target POS
 POS_EXTERNAL_OBJECTS =
@@ -198,13 +142,9 @@ POS: CMakeFiles/POS.dir/main.c.o
 POS: CMakeFiles/POS.dir/terminal_display.c.o
 POS: CMakeFiles/POS.dir/client.c.o
 POS: CMakeFiles/POS.dir/server.c.o
-POS: CMakeFiles/POS.dir/server/pos_sockets/active_socket.c.o
-POS: CMakeFiles/POS.dir/server/pos_sockets/passive_socket.c.o
-POS: CMakeFiles/POS.dir/server/pos_sockets/char_buffer.c.o
-POS: CMakeFiles/POS.dir/klient/my_socket.c.o
 POS: CMakeFiles/POS.dir/build.make
 POS: CMakeFiles/POS.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable POS"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/tmp/tmp.nIs1zjQsfW/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable POS"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/POS.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
