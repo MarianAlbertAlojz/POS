@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include "terminal_display.h"
 #include "server.h"
+#include "client.h"
 //#include "client.h"
 /*
  * Tu  bude logika od Andreja,teda pohyb hore,dolu,vpravo,vlavo
@@ -10,22 +11,6 @@
  *
  * */
 
-void vypis(int velkost, int pole[][velkost]) {
-    for (int i = 0; i < velkost; ++i) {
-        for (int j = 0; j < velkost; ++j) {
-            printf("%d  ", pole[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-void inicializuj(int velkost, int pole[][velkost]) {
-    for (int i = 0; i < velkost; ++i) {
-        for (int j = 0; j < velkost; ++j) {
-            pole[i][j] = 0;
-        }
-    }
-}
 
 void generuj(TERMINAL_UI *terminalPrint, enum ROLE role) {
     int suradnicaX;
@@ -36,9 +21,9 @@ void generuj(TERMINAL_UI *terminalPrint, enum ROLE role) {
         suradnicaX = rand() % terminalPrint->boardSize;
         suradnicaY = rand() % terminalPrint->boardSize;
 
-        if (role == CLIENT_1) {
+        if (role == HOST) {
             p_valueOfField = &terminalPrint->boardClient_1.policka[suradnicaX][suradnicaY].value;
-        } else if (role == CLIENT_2) {
+        } else if (role == CLIENT) {
             p_valueOfField = &terminalPrint->boardClient_2.policka[suradnicaX][suradnicaY].value;
         }
     } while (*p_valueOfField != 0);
@@ -48,9 +33,9 @@ void generuj(TERMINAL_UI *terminalPrint, enum ROLE role) {
 
 bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
     BOARD *p_board;
-    if (role == CLIENT_1) {
+    if (role == HOST) {
         p_board = &terminalPrint->boardClient_1;
-    } else if (role == CLIENT_2) {
+    } else if (role == CLIENT) {
         p_board = &terminalPrint->boardClient_2;
     }
     int index;
@@ -248,66 +233,19 @@ bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
 
 int main(int argc, char * argv[]) {
    if (strcmp(argv[1],"server") == 0){
-        printf("Jozef\n");
         server();
+   }else {
+        client();
    }
-
-
-    /* GAME game;
-    BOARD celepole;
-    TERMINAL_UI game_TerminalPrint;
-    TIMER game_Timer;
-    PLAYER  player_1;
-    PLAYER  player_2;
-    game.players[CLIENT_1] = player_1;
-    game.players[CLIENT_2] = player_2;
-    strcpy(player1NameGlob, "majco");
-    strcpy(player2NameGlob, "vajco");
-    //celepole.boardSize = 4;
-    game_TerminalPrint.boardSize = 4;
-    createBoard(&game_TerminalPrint);
-    initGameSettings(&game,&game_Timer,SIZE_4,MOVES_30,MINUTE);
-    initTimer(&game_Timer);
-    initGame(&game,&game_Timer,&game_TerminalPrint);
-    initPlayers(&game,player1NameGlob,player2NameGlob);
-    printf("generujem");
-    pthread_mutex_init(&game.game_Mutex, NULL);
-    pthread_cond_init(&game.timer, NULL);
-    pthread_cond_init(&game.server, NULL);
-    pthread_cond_init(&game.client, NULL);
-    pthread_t timerThreadID;
-    pthread_t serverThreadID;
-    pthread_t clientThreadID;
-    //pthread_create(&serverThreadID, NULL, serverThread, &game);
-    pthread_create(&timerThreadID, NULL, timerThread, &game);
-    pthread_create(&clientThreadID, NULL, clientThread, &game);
-    pthread_join(timerThreadID, NULL);
-    pthread_join(clientThreadID, NULL);
-    //pthread_join(serverThreadID, NULL);
-    pthread_mutex_destroy(&game.game_Mutex);
-    pthread_cond_destroy(&game.timer);
-    pthread_cond_destroy(&game.server);
-    pthread_cond_destroy(&game.server);
-    /* generuj(&game_TerminalPrint,CLIENT_1);
-     generuj(&game_TerminalPrint,CLIENT_2);
+    /* generuj(&game_TerminalPrint,HOST);
+     generuj(&game_TerminalPrint,CLIENT);
      printf("idem hore");
      printBoard(&game_TerminalPrint);
-     pohyb('w',&game_TerminalPrint,CLIENT_1);
-     generuj(&game_TerminalPrint,CLIENT_1);
+     pohyb('w',&game_TerminalPrint,HOST);
+     generuj(&game_TerminalPrint,HOST);
      printBoard(&game_TerminalPrint);
-     pohyb('w',&game_TerminalPrint,CLIENT_1);
- */
-    // Initialize the mutex
-    /* if (pthread_mutex_init(&game_Timer.timer_Mutex, NULL) != 0) {
-         fprintf(stderr, "Error initializing mutex.\n");
-         return EXIT_FAILURE;
-     }
-
-     // Create a thread for the timer
-     if (pthread_create(&timerThreadID, NULL, timerThread, &game_Timer.timer_Mutex) != 0) {
-         fprintf(stderr, "Error creating timer thread.\n");
-         return EXIT_FAILURE;
-     }*/
+     pohyb('w',&game_TerminalPrint,HOST);
+    */
     return 0;
 }
 
@@ -317,42 +255,16 @@ int main(int argc, char * argv[]) {
  *
  * */
 
-
-
-/*
-void initGameSettings(GAME *game, TIMER *game_Timer, enum SIZE_MODE gameSize, enum PLAYER_MOVE_MODE moveMode,
-                      enum TIMER_MODE timerMode) {
-    game->game_Size = gameSize;
-    game->game_MaxPlayerMoves = moveMode;
-    game_Timer->gameTimer_Mode = timerMode;
-}
-
-void initGame(GAME *game, TIMER *game_Timer, TERMINAL_UI *game_TerminalPrint) {
-    game->game_ConnectedPlayers = 0;
-
-    game->game_Timer = game_Timer;
-    game->game_TerminalPrint = game_TerminalPrint;
-    //calloc pre server player
-    //calloc pre client player
-    //game.players = calloc(); //tu spravit calloc pre playerov v hre podla max players(max players moze byt spravene aj cez enumy
-    pthread_mutex_init(&game->game_Mutex,NULL);
-}
-
-void initTimer(TIMER * game_Timer) {
-    pthread_mutex_init(&game_Timer->timer_Mutex,NULL);
-    game_Timer->gameTimer_ActualTime_Seconds = game_Timer->gameTimer_Mode * CONVERT_TO_SECOND;
-}
-*/
 /*
  * void initPlayers(GAME * game, char player1Name[MAX_NAME_LENGTH], char player2Name[MAX_NAME_LENGTH]) {
-    strcpy(game->players[CLIENT_1].name, player1Name);
-    game->players[CLIENT_1].playerMove = 10;
-    game->players[CLIENT_1].score = 1000000;
-    game->players[CLIENT_1].playerBoard = game->game_TerminalPrint->boardClient_1;
-    strcpy(game->players[CLIENT_2].name, player2Name);
-    game->players[CLIENT_2].playerMove = 20;
-    game->players[CLIENT_2].score = 2000000;
-    game->players[CLIENT_2].playerBoard = game->game_TerminalPrint->boardClient_2;
+    strcpy(game->players[HOST].name, player1Name);
+    game->players[HOST].playerMove = 10;
+    game->players[HOST].score = 1000000;
+    game->players[HOST].playerBoard = game->game_TerminalPrint->boardClient_1;
+    strcpy(game->players[CLIENT].name, player2Name);
+    game->players[CLIENT].playerMove = 20;
+    game->players[CLIENT].score = 2000000;
+    game->players[CLIENT].playerBoard = game->game_TerminalPrint->boardClient_2;
 }
 
 */

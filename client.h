@@ -5,8 +5,13 @@
 #ifndef POS_CLIENT_H
 #define POS_CLIENT_H
 #include "libraries.h"
-
+#include "shared.h"
 typedef struct klient {
+    uint8_t playerMove;
+    int score;
+    char name[MAX_NAME_LENGTH];
+    BOARD playerBoard;
+    enum ROLE role;
     char msg[256];
     int sockfd;
     pthread_mutex_t mutex;

@@ -6,12 +6,13 @@
 #define POS_SHARED_H
 
 #include "libraries.h"
-
+#include "terminal_display.h"
 #define MAX_NAME_LENGTH 10
 #define PLAYERS_MAX 2
+
 enum ROLE {
-    CLIENT_1,
-    CLIENT_2
+    HOST,
+    CLIENT
 };
 
 enum SIZE_MODE {
@@ -32,19 +33,7 @@ enum PLAYER_MOVE_MODE {
     MOVES_40 = 40
 };
 
-typedef struct field {
-    int value;
-}FIELD;
 
-typedef struct board {
-    FIELD ** policka;
-}BOARD;
-
-typedef struct terminalDisplay {
-    BOARD boardClient_1;
-    BOARD boardClient_2;
-    uint8_t boardSize;
-}TERMINAL_UI;
 /*
 typedef struct player {
     enum ROLE role;
@@ -65,7 +54,7 @@ typedef struct game {
     PLAYER players[PLAYERS_MAX];
     uint8_t game_ConnectedPlayers;
     uint8_t game_MaxPlayerMoves;
-    enum SIZE_MODE game_Size;
+    enum SIZE_MODE game_size;
     TIMER * game_Timer;
     TERMINAL_UI * game_TerminalPrint;
     pthread_mutex_t game_Mutex;

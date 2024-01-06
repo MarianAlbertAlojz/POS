@@ -2,7 +2,7 @@
 #include "server.h"
 #include "libraries.h"
 
-bool receiveMsg (int sockfd, char* buffer) {
+bool receiveMsg_Server (int sockfd, char* buffer) {
     bzero(buffer,256);
     int n = read(sockfd, buffer, 255);
     if (n < 0)
@@ -13,7 +13,7 @@ bool receiveMsg (int sockfd, char* buffer) {
     return true;
 }
 
-bool sendMsg (int sockfd, char* buffer) {
+bool sendMsg_Server (int sockfd, char* buffer) {
     int n = write(sockfd, buffer, strlen(buffer)+1);
     if (n < 0)
     {
@@ -38,12 +38,13 @@ void* hracF (void *arg) {
     player->threadData.start = true;
 
     pthread_mutex_lock(&player->threadData.mutex);
-    sendMsg(player->playerSock, "start\0");
+    receiveMsg_Server(player->playerSock,player->data);
+    sendMsg_Server(player->playerSock, "start\0");
     pthread_mutex_unlock(&player->threadData.mutex);
 
     while (strcmp(player->msg, "koniec\0") != 0) {
         pthread_mutex_lock(&player->threadData.mutex);
-        receiveMsg(player->playerSock, player->msg);
+        receiveMsg_Server(player->playerSock, player->msg);
         printf("HRAC %d: %s\n", player->id, player->msg);
         pthread_mutex_unlock(&player->threadData.mutex);
     }
@@ -69,8 +70,11 @@ void* timeF (void *arg) {
         } else {
             printf("SERVER: zostavajuci cas: %d\n", game->time);
             pthread_mutex_lock(&game->threadData.mutex);
-            sendMsg(game->players[0].playerSock, "1\0");
-            sendMsg(game->players[1].playerSock, "0\0");
+            sprintf(game->players[0].data, "%d", game->time);
+            sprintf(game->players[1].data, "%d", game->time);
+            printf("%s\n", game->players[0].data);
+            sendMsg_Server(game->players[0].playerSock, game->players[0].data);
+            sendMsg_Server(game->players[1].playerSock, game->players[0].data);
             pthread_mutex_unlock(&game->threadData.mutex);
         }
         game->time--;
@@ -78,8 +82,8 @@ void* timeF (void *arg) {
     }
 
     pthread_mutex_lock(&game->threadData.mutex);
-    sendMsg(game->players[0].playerSock, "koniec\0");
-    sendMsg(game->players[1].playerSock, "koniec\0");
+    sendMsg_Server(game->players[0].playerSock, "koniec\0");
+    sendMsg_Server(game->players[1].playerSock, "koniec\0");
     pthread_mutex_unlock(&game->threadData.mutex);
 
     return NULL;
@@ -94,7 +98,7 @@ int server()
     bzero((char*)&serv_addr, sizeof(serv_addr)); // inicializacia sietovej adresy
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(10002);
+    serv_addr.sin_port = htons(10003);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // vytvorenie socketu
     if (sockfd < 0)
