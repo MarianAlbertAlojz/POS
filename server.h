@@ -6,17 +6,41 @@
 #define POS_SERVER_H
 #include "libraries.h"
 #include "shared.h"
-#include "server/pos_sockets/active_socket.h"
 
-typedef struct thread_data {
+
+typedef struct threadData {
+    bool start;
+    bool koniec;
     pthread_mutex_t mutex;
-    pthread_cond_t is_full;
-    pthread_cond_t is_empty;
-
-    short port;
-    ACTIVE_SOCKET* my_socket;
 } THREAD_DATA;
 
+
+typedef struct player {
+    enum ROLE role;
+    uint8_t playerMove;
+    int score;
+    char name[MAX_NAME_LENGTH];
+    BOARD playerBoard;
+    int serverSock;
+    int playerSock;
+    int id;
+    char data[100];
+    char msg[256];
+    THREAD_DATA threadData;
+} PLAYER;
+
+
+
+
+typedef struct game {
+    int time;
+    int** board;
+    PLAYER* players;
+    uint8_t game_ConnectedPlayers;
+    uint8_t game_MaxPlayerMoves;
+    enum SIZE_MODE game_Size;
+    THREAD_DATA threadData;
+}GAME;
 
 typedef struct server {
     int numberOfClients;
@@ -29,7 +53,6 @@ typedef struct server {
     pthread_t clients[PLAYERS_MAX];
 
 }SERVER;
-
 int server();
 void initServer(SERVER * server);
 void createSocket(SERVER * server);

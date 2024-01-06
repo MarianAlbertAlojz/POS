@@ -1,12 +1,8 @@
 #include <time.h>
 #include <pthread.h>
 #include "terminal_display.h"
-#include "server/pos_sockets/passive_socket.h"
-#include "server/pos_sockets/char_buffer.h"
-#include "server/pos_sockets/active_socket.h"
-#include "server/buffer.h"
 #include "server.h"
-#include "client.h"
+//#include "client.h"
 /*
  * Tu  bude logika od Andreja,teda pohyb hore,dolu,vpravo,vlavo
  * premysliet:
@@ -233,73 +229,6 @@ bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
  * info o tabulkach sa bude aktualizovat po kazdej sekunde( server--> klienti)
  * */
 
-void* serverThread(void* arg) {
-    GAME* game = (GAME*)arg;
-
-    while (1) {
-        pthread_mutex_lock(&game->game_Mutex);
-        pthread_cond_wait(&game->server,&game->game_Mutex);
-        // Perform server-related actions
-
-        printf("Server: Performing actions\n");
-
-        // Signal the client thread that the server has updated
-        pthread_cond_signal(&game->timer);
-
-        // Wait for the client thread to complete its actions
-        // pthread_cond_wait(&game->server_Condition, &game->game_Mutex);
-
-        pthread_mutex_unlock(&game->game_Mutex);
-
-        // Sleep or perform other server actions
-    }
-
-    return NULL;
-}
-
-void* clientThread(void* arg) {
-    GAME* game = (GAME*)arg;
-
-    while (1) {
-        pthread_mutex_lock(&game->game_Mutex);
-        pthread_cond_wait(&game->client,&game->game_Mutex);
-        // Perform server-related actions
-        printBoard(game);
-
-        //printf("Server: Performing actions\n");
-
-        // Signal the client thread that the server has updated
-        pthread_cond_signal(&game->timer);
-
-        // Wait for the client thread to complete its actions
-        // pthread_cond_wait(&game->server_Condition, &game->game_Mutex);
-
-        pthread_mutex_unlock(&game->game_Mutex);
-
-        // Sleep or perform other server actions
-    }
-
-    return NULL;
-}
-
-void * timerThread(void * arg) {
-    GAME * game= (GAME *) arg;
-    TIMER * timer = (TIMER*)game->game_Timer;
-    bool timerLoop = true;
-    timer->gameTimer_ActualTime_Seconds += 1;
-    while(timerLoop) {
-        sleep(1);
-        timer->gameTimer_ActualTime_Seconds -= 1;
-
-        pthread_cond_signal(&game->client);
-        pthread_cond_wait(&game->timer,&game->game_Mutex);
-        if (timer->gameTimer_ActualTime_Seconds <= 0) {
-            timerLoop = false;
-        }
-        pthread_mutex_unlock(&game->game_Mutex);
-    }
-    return NULL;
-}
 
 
 /*
@@ -390,7 +319,7 @@ int main(int argc, char * argv[]) {
 
 
 
-
+/*
 void initGameSettings(GAME *game, TIMER *game_Timer, enum SIZE_MODE gameSize, enum PLAYER_MOVE_MODE moveMode,
                       enum TIMER_MODE timerMode) {
     game->game_Size = gameSize;
@@ -413,8 +342,9 @@ void initTimer(TIMER * game_Timer) {
     pthread_mutex_init(&game_Timer->timer_Mutex,NULL);
     game_Timer->gameTimer_ActualTime_Seconds = game_Timer->gameTimer_Mode * CONVERT_TO_SECOND;
 }
-
-void initPlayers(GAME * game, char player1Name[MAX_NAME_LENGTH], char player2Name[MAX_NAME_LENGTH]) {
+*/
+/*
+ * void initPlayers(GAME * game, char player1Name[MAX_NAME_LENGTH], char player2Name[MAX_NAME_LENGTH]) {
     strcpy(game->players[CLIENT_1].name, player1Name);
     game->players[CLIENT_1].playerMove = 10;
     game->players[CLIENT_1].score = 1000000;
@@ -425,18 +355,6 @@ void initPlayers(GAME * game, char player1Name[MAX_NAME_LENGTH], char player2Nam
     game->players[CLIENT_2].playerBoard = game->game_TerminalPrint->boardClient_2;
 }
 
-/*
- * Tu  bude casovac v threade , bude mat za ulohu odratavat cas
- *
- *
- * */
+*/
 
-void waitOneSecond() {
-    clock_t start_time = clock();
-    clock_t end_time = start_time + CLOCKS_PER_SEC;
-
-    while (clock() < end_time) {
-        // Wait for one second
-    }
-}
 

@@ -1,3 +1,4 @@
-ToolSet: 1.0 (remote)Options: 
+ToolSet: 11.0 w64 (local)@C:\Users\PC1\AppData\Local\Programs\CLion\bin\mingw
+Options: 
 
-Options:
+Options:-DCMAKE_MAKE_PROGRAM=C:/Users/PC1/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe

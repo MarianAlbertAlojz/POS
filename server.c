@@ -1,35 +1,6 @@
+
 #include "server.h"
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <stdbool.h>
-
-typedef struct threadData {
-    bool start;
-    bool koniec;
-    pthread_mutex_t mutex;
-} THREAD_DATA;
-
-typedef struct player {
-    int serverSock;
-    int playerSock;
-    int id;
-    char data[100];
-    char msg[256];
-    THREAD_DATA threadData;
-} PLAYER;
-
-typedef struct game {
-    int time;
-    int** board;
-    PLAYER* players;
-    THREAD_DATA threadData;
-} GAME;
+#include "libraries.h"
 
 bool receiveMsg (int sockfd, char* buffer) {
     bzero(buffer,256);
@@ -114,7 +85,7 @@ void* timeF (void *arg) {
     return NULL;
 }
 
-int main(int argc, char *argv[])
+int server()
 {
     printf("SERVER: spustam server!\n");
     int sockfd;
@@ -138,7 +109,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    listen(sockfd, 5); // prijimanie klientov
+    listen(sockfd, PLAYERS_MAX); // prijimanie klientov
 
     printf("SERVER: cakam na pripojenie hracov!\n");
 
@@ -190,9 +161,7 @@ int main(int argc, char *argv[])
 // Created by PC1 on 04/01/2024.
 //
 
-#include "server.h"
-#include "server/pos_sockets/passive_socket.h"
-#include "server/pos_sockets/active_socket.h"
+
 
 
 /*
@@ -219,7 +188,7 @@ int server() {
     thread_data_destroy(&data);
     active_socket_destroy(&my_socket);
 }
-*/
+
 int initServerSocket(SERVER *serverInfo) {
     serverInfo->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverInfo->serverSocket < 0) {
@@ -292,4 +261,4 @@ void* consume(void* thread_data) {
 
     return NULL;
 }
-
+*/

@@ -163,7 +163,7 @@ void printColumnNumber(const int columnSize)
     printf("\n");
 }
 
-void printBoard(GAME * game)
+void printBoard(GAME_TERMINAL * game)
 {
     //printColumnNumber(game->game_TerminalPrint->boardSize);
     printf("\n");
@@ -179,12 +179,12 @@ void printBoard(GAME * game)
     }
     printOnlyVerticalSection(game->game_TerminalPrint->boardSize);
     printTimeHeader("time",&game->game_Timer->gameTimer_ActualTime_Seconds);
-    printDoubleHeader("klient",game->players);
-    printDoubleHeader("score",game->players);
-    printDoubleHeader("move",game->players);
+    //printDoubleHeader("klient",game->players);
+    //printDoubleHeader("score",game->players);
+    //printDoubleHeader("move",game->players);
 }
 
-void printDoubleHeader(const char *label, PLAYER * players) {
+/*void printDoubleHeader(const char *label, PLAYER * players) {
     if (strcmp(label,"score") == 0) {
         printf("%s%s: %-37d%s: %d\n",empty, label, players[CLIENT_1].score, label, players[CLIENT_2].score);
     }else if(strcmp(label,"move") == 0) {
@@ -196,4 +196,4 @@ void printDoubleHeader(const char *label, PLAYER * players) {
 
 void printTimeHeader(const char *label,const uint8_t * time) {
     printf("%s%s    %s: %u \n",emptyLonger, empty, label, *time);
-}
+}*/

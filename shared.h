@@ -45,23 +45,22 @@ typedef struct terminalDisplay {
     BOARD boardClient_2;
     uint8_t boardSize;
 }TERMINAL_UI;
-
+/*
 typedef struct player {
     enum ROLE role;
     uint8_t playerMove;
     int score;
     char name[MAX_NAME_LENGTH];
     BOARD playerBoard;
+    int serverSock;
+    int playerSock;
+    int id;
+    char data[100];
+    char msg[256];
+    THREAD_DATA threadData;
 }PLAYER;
-
-// toto skor pre server.h
-typedef struct timer {
-    uint8_t gameTimer_ActualTime_Seconds;
-    enum TIMER_MODE gameTimer_Mode;// moze byt max 4 minuty lebo uint8 je 255
-    pthread_mutex_t timer_Mutex;
-
-}TIMER;
-
+*/
+/*
 typedef struct game {
     PLAYER players[PLAYERS_MAX];
     uint8_t game_ConnectedPlayers;
@@ -73,5 +72,16 @@ typedef struct game {
     pthread_cond_t server;
     pthread_cond_t client;
     pthread_cond_t timer;
+    THREAD_DATA threadData;
 }GAME;
+ */
+// toto skor pre server.h
+typedef struct timer {
+    uint8_t gameTimer_ActualTime_Seconds;
+    enum TIMER_MODE gameTimer_Mode;// moze byt max 4 minuty lebo uint8 je 255
+    pthread_mutex_t timer_Mutex;
+
+}TIMER;
+
+
 #endif //POS_SHARED_H

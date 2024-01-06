@@ -1,21 +1,12 @@
-<<<<<<< HEAD
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
-#include <stdbool.h>
-#include <pthread.h>
+//
+// Created by PC1 on 04/01/2024.
+//
 
-typedef struct klient {
-    char msg[256];
-    int sockfd;
-    pthread_mutex_t mutex;
-} KLIENT;
+#include "client.h"
+#include <stdio.h>
+
+
+
 
 bool receiveMsg (int sockfd, char* buffer) {
     bzero(buffer,256);
@@ -106,32 +97,5 @@ int main(int argc, char *argv[])
     pthread_mutex_destroy(&klientData.mutex);
     close(sockfd);
 
-    return 0;
-}
-
-
-
-
-=======
->>>>>>> origin/master
-//
-// Created by PC1 on 04/01/2024.
-//
-
-#include "client.h"
-#include <stdio.h>
-#include "klient/my_socket.h"
-
-int client() {
-    const char* serverAddress = "frios2.fri.uniza.sk";
-    short serverPort = 10001;
-    MySocket* mySocket = createConnection(serverAddress, serverPort);
-    sendData(mySocket, "Hello, server!");
-
-    // Odeslání koncové zprávy
-    sendEndMessage(mySocket);
-
-    // Zničení pripojení
-    destroyConnection(mySocket);
     return 0;
 }

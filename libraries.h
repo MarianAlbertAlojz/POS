@@ -11,8 +11,11 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <pthread.h>
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <string.h>
-
+#include <netinet/in.h>
+#include <time.h>
 
 #endif //POS_LIBRARIES_H
