@@ -48,7 +48,7 @@ _Bool active_socket_is_reading(struct active_socket* self) {
     return can_read;
 }
 
-_Bool active_socket_try_get_read_data(struct active_socket* self, struct char_buffer* output) {
+/*_Bool active_socket_try_get_read_data(struct active_socket* self, struct char_buffer* output) {
     _Bool result = false;
 
     if (pthread_mutex_trylock(&self->mutex_received_data) == 0) {
@@ -57,7 +57,7 @@ _Bool active_socket_try_get_read_data(struct active_socket* self, struct char_bu
     }
 
     return result;
-}
+}*/
 
 _Bool active_socket_is_end_message(struct active_socket* self, struct char_buffer* message) {
     return message->size == strlen(self->end_message) &&

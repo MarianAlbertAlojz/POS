@@ -67,17 +67,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-<<<<<<< HEAD
-CMAKE_SOURCE_DIR = /tmp/tmp.2jl5hwTCTf
-
-# The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /tmp/tmp.2jl5hwTCTf/cmake-build-debug
-=======
 CMAKE_SOURCE_DIR = /tmp/tmp.p9WanbUdMo
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /tmp/tmp.p9WanbUdMo/cmake-build-debug
->>>>>>> origin/master
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -106,15 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-<<<<<<< HEAD
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.2jl5hwTCTf/cmake-build-debug/CMakeFiles /tmp/tmp.2jl5hwTCTf/cmake-build-debug//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.2jl5hwTCTf/cmake-build-debug/CMakeFiles 0
-=======
 	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles /tmp/tmp.p9WanbUdMo/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
 	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.p9WanbUdMo/cmake-build-debug/CMakeFiles 0
->>>>>>> origin/master
 .PHONY : all
 
 # The main clean target
@@ -155,8 +142,6 @@ POS/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/build
 .PHONY : POS/fast
 
-<<<<<<< HEAD
-=======
 client.o: client.c.o
 
 .PHONY : client.o
@@ -184,7 +169,6 @@ client.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/client.c.s
 .PHONY : client.c.s
 
->>>>>>> origin/master
 main.o: main.c.o
 
 .PHONY : main.o
@@ -212,8 +196,6 @@ main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/main.c.s
 .PHONY : main.c.s
 
-<<<<<<< HEAD
-=======
 server.o: server.c.o
 
 .PHONY : server.o
@@ -295,7 +277,6 @@ terminal_display.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/POS.dir/build.make CMakeFiles/POS.dir/terminal_display.c.s
 .PHONY : terminal_display.c.s
 
->>>>>>> origin/master
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -305,11 +286,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... POS"
-<<<<<<< HEAD
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-=======
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"
@@ -325,7 +301,6 @@ help:
 	@echo "... terminal_display.o"
 	@echo "... terminal_display.i"
 	@echo "... terminal_display.s"
->>>>>>> origin/master
 .PHONY : help
 
 

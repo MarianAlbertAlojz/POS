@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -111,6 +112,8 @@ int main(int argc, char *argv[])
 
 
 
+=======
+>>>>>>> origin/master
 //
 // Created by PC1 on 04/01/2024.
 //
