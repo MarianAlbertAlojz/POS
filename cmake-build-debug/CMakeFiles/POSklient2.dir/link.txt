@@ -1,1 +1,0 @@
-/usr/bin/cc -g CMakeFiles/POSklient2.dir/main.c.o CMakeFiles/POSklient2.dir/terminal_display.c.o CMakeFiles/POSklient2.dir/client.c.o CMakeFiles/POSklient2.dir/server.c.o -o POSklient2  -lpthread 
