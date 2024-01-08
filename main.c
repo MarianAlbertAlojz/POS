@@ -3,19 +3,6 @@
 #include "terminal_display.h"
 #include "server.h"
 #include "client.h"
-#include "server.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <string.h>
-#include <netinet/in.h>
-#include <time.h>
 
 /*
  * Tu  bude logika od Andreja,teda pohyb hore,dolu,vpravo,vlavo
@@ -25,32 +12,16 @@
  * */
 
 
-void generuj(TERMINAL_UI *terminalPrint, enum ROLE role) {
-    int suradnicaX;
-    int suradnicaY;
-    int *p_valueOfField;
 
-    do {
-        suradnicaX = rand() % terminalPrint->boardSize;
-        suradnicaY = rand() % terminalPrint->boardSize;
-
-        if (role == HOST) {
-            p_valueOfField = &terminalPrint->boardClient_1.policka[suradnicaX][suradnicaY].value;
-        } else if (role == CLIENT) {
-            p_valueOfField = &terminalPrint->boardClient_2.policka[suradnicaX][suradnicaY].value;
-        }
-    } while (*p_valueOfField != 0);
-
-    *p_valueOfField = (rand() % 2 + 1) * 2;
-}
 
 bool pohyb(char smer,TERMINAL_UI *terminalPrint, enum ROLE role) {
     BOARD *p_board;
-    if (role == HOST) {
-        p_board = &terminalPrint->boardClient_1;
+    /*if (role == HOST) {
+        p_board = &terminalPrint->boardClients[HOST];
     } else if (role == CLIENT) {
-        p_board = &terminalPrint->boardClient_2;
-    }
+        p_board = &terminalPrint->boardClients[CLIENT];
+    }*/
+    p_board = &terminalPrint->boardClients[role];
     int index;
     bool zmena;
     switch (smer) {

@@ -1,4 +1,3 @@
-
 #include "server.h"
 
 bool receiveMsg_Server (int sockfd, char* buffer) {
@@ -22,25 +21,49 @@ bool sendMsg_Server (int sockfd, char* buffer) {
     return true;
 }
 
+uint8_t getTimerMode(uint8_t mode) {
+    switch (mode) {
+        case MINUTE: return MINUTE;
+        case TWO_MINUTES: return TWO_MINUTES;
+        case THREE_MINUTES: return THREE_MINUTES;
+        case FOUR_MINUTES: return FOUR_MINUTES;
+        default: return 130;
+    }
+}
+
+void setTimerMode (uint8_t time,int * gameTime){
+    *gameTime = TO_SECONDS * (time);
+}
+
+
 void* hracF (void *arg) {
     PLAYER *player = arg;
     player->threadData->start = true;
 
     pthread_mutex_lock(&player->threadData->mutex);
     pthread_cond_wait(&player->threadData->pokracuj,&player->threadData->mutex);
-
-    receiveMsg_Server(player->playerSock,player->data);
     pthread_mutex_unlock(&player->threadData->mutex);
-    printf("nie som v slucke\n");
+
+    //receiveMsg_Server(player->playerSock,player->msg);
+
     while (strcmp(player->msg, "k\0") != 0) {
-        pthread_mutex_lock(&player->threadData->mutex);
+        //pthread_mutex_lock(&player->threadData->mutex);
         receiveMsg_Server(player->playerSock, player->msg);
-        printf("HRAC sa odpojil hra skoncila %d: %s\n", player->id, player->msg);
+        //printf("HRAC sa odpojil hra skoncila %d: %s\n", player->id, player->msg);
+        //pthread_mutex_unlock(&player->threadData->mutex);
+
+        pthread_mutex_lock(&player->threadData->mutex);
+        bzero(player->data, 100);
+        stpcpy(player->data, player->msg);
+        printf("%s\n", player->data);
         pthread_mutex_unlock(&player->threadData->mutex);
+
     }
     pthread_mutex_lock(&player->threadData->mutex);
     player->threadData->koniec = true;
     pthread_mutex_unlock(&player->threadData->mutex);
+
+    //printf("HRAC sa odpojil hra skoncila %d: %s\n", player->id, player->msg);
 
     close(player->playerSock);
     return NULL;
@@ -48,44 +71,79 @@ void* hracF (void *arg) {
 
 void* timeF (void *arg) {
     GAME *game = arg;
+    char buffer0[100], buffer1[100];
     while (!game->players[0].threadData->start || !game->players[1].threadData->start) {
 
     }
-    pthread_mutex_lock(&game->threadData->mutex);
+    //pthread_mutex_lock(&game->threadData->mutex);
     sendMsg_Server(game->players[0].playerSock, "host");
     sendMsg_Server(game->players[1].playerSock, "klient");
     receiveMsg_Server(game->players[0].playerSock,game->players[0].msg);
-    printf("%s\n", game->players[0].msg);
+    printf("Nastavenie v poradi time;moves %s\n", game->players[0].msg);
+    char timerCH = game->players[0].msg[2];
+    int timer = timerCH - '0';
+    setTimerMode(getTimerMode(timer),&game->time);
     sendMsg_Server(game->players[0].playerSock,"zobrazH");
     sendMsg_Server(game->players[1].playerSock,"zobrazC");
     receiveMsg_Server(game->players[1].playerSock,game->players[1].msg);
     sendMsg_Server(game->players[1].playerSock,game->players[0].msg);
+
+    pthread_mutex_lock(&game->threadData->mutex);
     pthread_cond_signal(&game->threadData->pokracuj);
     pthread_mutex_unlock(&game->threadData->mutex);
 
-    while (!game->players[0].threadData->koniec && !game->players[1].threadData->koniec) {
-        if (game->time == 0) {
+    bool podmienka;
+    pthread_mutex_lock(&game->threadData->mutex);
+    podmienka = !game->players[0].threadData->koniec && !game->players[1].threadData->koniec;
+    pthread_mutex_unlock(&game->threadData->mutex);
+
+    while (podmienka) {
+        if (game->time <= 0) {
             printf("SERVER: cas vyprsal!\n");
             pthread_mutex_lock(&game->threadData->mutex);
             game->players[0].threadData->koniec = true;
             pthread_mutex_unlock(&game->threadData->mutex);
         } else {
             printf("SERVER: zostavajuci cas: %d\n", game->time);
+            //pthread_mutex_lock(&game->threadData->mutex);
+            sprintf(game->players[0].msg, "%d", game->time);
+            sprintf(game->players[1].msg, "%d", game->time);
+            sendMsg_Server(game->players[0].playerSock, game->players[0].msg);// timer 0
+            sendMsg_Server(game->players[1].playerSock, game->players[1].msg);// timer 1
+            receiveMsg_Server(game->players[0].playerSock, game->players[0].msg); // pole od HOST
+            receiveMsg_Server(game->players[1].playerSock, game->players[1].msg);   // pole od CLIENT
+           // strcpy(game->players[0].msg,"512;512;512;512;1024;16;16;16;16;32;32;32;32;1024;1024;1024");
+            sendMsg_Server(game->players[0].playerSock, game->players[1].msg);// pole od CLIENT pre HOST
+            sendMsg_Server(game->players[1].playerSock, game->players[0].msg);// pole od HOST pre CLIENT
+            receiveMsg_Server(game->players[0].playerSock, game->players[0].msg); // move od HOST
+            receiveMsg_Server(game->players[1].playerSock, game->players[1].msg);   // move od CLIENT
+            sendMsg_Server(game->players[0].playerSock, game->players[1].msg);// move od CLIENT pre HOST
+            sendMsg_Server(game->players[1].playerSock, game->players[0].msg);// move od HOST pre CLIENT
+            /*bzero(buffer0, 100);
+            bzero(buffer1, 100);
             pthread_mutex_lock(&game->threadData->mutex);
-            sprintf(game->players[0].data, "%d", game->time);
-            sprintf(game->players[1].data, "%d", game->time);
-            sendMsg_Server(game->players[0].playerSock, game->players[0].data);
-            sendMsg_Server(game->players[1].playerSock, game->players[1].data);
+            stpcpy(buffer0, game->players[0].data);
+            stpcpy(buffer1, game->players[1].data);
             pthread_mutex_unlock(&game->threadData->mutex);
+
+            sendMsg_Server(game->players[1].playerSock, buffer0);
+            sendMsg_Server(game->players[0].playerSock, buffer1);
+            printf("%s , %s", buffer0, buffer1);*/
+            //pthread_mutex_unlock(&game->threadData->mutex);
         }
-        game->time--;
-        sleep(1);
+
+        game->time -= 3;
+        sleep(3);
+
+        pthread_mutex_lock(&game->threadData->mutex);
+        podmienka = !game->players[0].threadData->koniec && !game->players[1].threadData->koniec;
+        pthread_mutex_unlock(&game->threadData->mutex);
     }
 
-    pthread_mutex_lock(&game->threadData->mutex);
+    //pthread_mutex_lock(&game->threadData->mutex);
     sendMsg_Server(game->players[0].playerSock, "k\0");
     sendMsg_Server(game->players[1].playerSock, "k\0");
-    pthread_mutex_unlock(&game->threadData->mutex);
+    //pthread_mutex_unlock(&game->threadData->mutex);
 
     return NULL;
 }
@@ -99,7 +157,7 @@ int server()
     bzero((char*)&serv_addr, sizeof(serv_addr)); // inicializacia sietovej adresy
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(18488);
+    serv_addr.sin_port = htons(18489);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // vytvorenie socketu
     if (sockfd < 0)
@@ -135,10 +193,10 @@ int server()
 
     GAME gameData;
     gameData.time = 60;
-    gameData.board = (int**)calloc(5, sizeof(int*));
+    /*gameData.board = (int**)calloc(5, sizeof(int*));
     for (size_t i = 0; i < 5; ++i) {
         gameData.board[i] = (int*)calloc(5, sizeof(int));
-    }
+    }*/
     gameData.players = playerData;
     gameData.threadData = &threadData;
 
@@ -171,16 +229,6 @@ int server()
 
     return 0;
 }
-
-
-
-
-
-//
-// Created by PC1 on 04/01/2024.
-//
-
-
 
 
 /*

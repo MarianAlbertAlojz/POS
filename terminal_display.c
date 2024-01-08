@@ -178,22 +178,23 @@ void printBoard(GAME_TERMINAL * game)
         }
     }
     printOnlyVerticalSection(game->game_TerminalPrint->boardSize);
-    //printTimeHeader("time",&game->game_Timer->gameTimer_ActualTime_Seconds);
-    //printDoubleHeader("klient",game->players);
-    //printDoubleHeader("score",game->players);
-    //printDoubleHeader("move",game->players);
+    printMiddleHeader("time", game->game_timerPrint);
+    printMiddleHeader("max move", game->game_moveMode);
+    printDoubleHeader("klient",game->playersInfo);
+    printDoubleHeader("score",game->playersInfo);
+    printDoubleHeader("playerMove",game->playersInfo);
 }
 
-/*void printDoubleHeader(const char *label, PLAYER * players) {
+void printDoubleHeader(const char *label, PLAYER_TERMINAL players[]) {
     if (strcmp(label,"score") == 0) {
         printf("%s%s: %-37d%s: %d\n",empty, label, players[HOST].score, label, players[CLIENT].score);
-    }else if(strcmp(label,"move") == 0) {
-        printf("%s%s: %-38u%s: %u\n",empty, label, players[HOST].playerMove, label, players[CLIENT].playerMove);
+    }else if(strcmp(label,"playerMove") == 0) {
+        printf("%s%s: %-32u%s: %u\n",empty, label, players[HOST].playerMove, label, players[CLIENT].playerMove);
     }else {
         printf("%s%s: %-36s%s: %s\n",empty, label, players[HOST].name, label, players[CLIENT].name);
     }
 }
 
-void printTimeHeader(const char *label,const uint8_t * time) {
-    printf("%s%s    %s: %u \n",emptyLonger, empty, label, *time);
-}*/
+void printMiddleHeader(const char *label, const int time) {
+    printf("%s%s    %s: %d \n",emptyLonger, empty, label, time);
+}
