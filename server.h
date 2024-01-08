@@ -51,9 +51,13 @@ typedef struct server {
     pthread_t clients[PLAYERS_MAX];
 
 }SERVER;
-int server();
-void initServer(SERVER * server);
-void createSocket(SERVER * server);
-void * client_handler(void * arg);
-void* consume(void* thread_data);
+
+bool receiveMsg_Server(int sockfd, char* buffer);
+bool sendMsg_Server(int sockfd, char* buffer);
+uint8_t getTimerMode(uint8_t mode);
+void setTimerMode(uint8_t time, int* gameTime);
+void* hracF(void* arg);
+void* timeF(void* arg);
+int server(void);
+
 #endif //POS_SERVER_H

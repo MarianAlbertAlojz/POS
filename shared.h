@@ -9,7 +9,7 @@
 #define MAX_NAME_LENGTH 10
 #define PLAYERS_MAX 2
 #define BUFFER_LENGTH 255
-
+#define TO_SECONDS 60
 enum ROLE {
     HOST,
     CLIENT

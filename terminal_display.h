@@ -38,19 +38,18 @@ typedef struct game_terminal {
     TERMINAL_UI * game_TerminalPrint;
 }GAME_TERMINAL;
 
-//void initPlayers(GAME_TERMINAL * game, char player1Name[MAX_NAME_LENGTH], char player2Name[MAX_NAME_LENGTH]);
+
 void initGameSettings(GAME_TERMINAL *game,TERMINAL_UI *game_TerminalPrint ,int gameSize,int gameMove,int gameTimer,enum ROLE role);
 void createBoard(TERMINAL_UI *terminalPrint);
 void freeBoard(TERMINAL_UI *terminalPrint);
 void createBoardHost(TERMINAL_UI * terminalPrint);
 void createBoardClient(TERMINAL_UI * terminalPrint);
 void printOnlyVerticalSection(int size);
-void printMiddleSection(const int size, const int row);
-void printSymbolSection(const TERMINAL_UI board, const int row);
-void printColumnNumber(const int columnSize);
+void printMiddleSection(int size, int row);
+void printSymbolSection(TERMINAL_UI board,int row);
 void printBoard(GAME_TERMINAL* game);
 void printDoubleHeader(const char *label, PLAYER_TERMINAL * players);
-void printMiddleHeader(const char *label, const int time);
+void printMiddleHeader(const char *label, int time);
 
 
 #endif //POS_TERMINAL_DISPLAY_H

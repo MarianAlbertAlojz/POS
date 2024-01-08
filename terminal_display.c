@@ -85,14 +85,10 @@ void createBoardClient(TERMINAL_UI *terminalPrint) {
 
 void printBlankSectionWithMessage(const int size)
 {
-    bool printOne = false;
-    bool printSecond = false;
     for (int column = 0; column < size-2; ++column) {
         printf("%s",empty );
         //printf("%s",empty );
     }
-
-
     for (int column = 0; column < size-2; ++column) {
         printf("%s",empty );
         //printf("%s",empty );
@@ -152,15 +148,6 @@ void printSymbolSection(const TERMINAL_UI terminalPrint, const int row)
     if(row != terminalPrint.boardSize - 1) {
         printf("\n");
     }
-}
-
-void printColumnNumber(const int columnSize)
-{
-    printf("  ");
-    for (int i = 1; i <= columnSize; ++i) {
-        printf("%d%s",i,empty);
-    }
-    printf("\n");
 }
 
 void printBoard(GAME_TERMINAL * game)
