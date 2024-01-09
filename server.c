@@ -1,268 +1,252 @@
-
 #include "server.h"
-#include "libraries.h"
 
-bool receiveMsg_Server (int sockfd, char* buffer) {
-    bzero(buffer,256);
-    int n = read(sockfd, buffer, 255);
-    if (n < 0)
-    {
-        perror("Error reading from socket");
-        return false;
-    }
-    return true;
-}
-
-bool sendMsg_Server (int sockfd, char* buffer) {
-    int n = write(sockfd, buffer, strlen(buffer)+1);
+int sendMsg (int writeSocket, char* buffer) {
+    int n;
+    n = write(writeSocket, buffer, strlen(buffer) + 1);
     if (n < 0)
     {
         perror("Error writing to socket");
-        return false;
+        return -5;
     }
-    return true;
+
+    return 0;
 }
 
-void* hracF (void *arg) {
-    PLAYER *player = arg;
-
-    struct sockaddr_in cli_addr;
-    socklen_t cli_len = sizeof(cli_addr);
-    player->playerSock = accept(player->serverSock, (struct sockaddr*)&cli_addr, &cli_len); // akceptovanie klienta
-    if (player->playerSock < 0)
+int receiveMsg (int readSocket, char* buffer) {
+    int n;
+    bzero(buffer,BUFFER_LENGTH);
+    n = read(readSocket, buffer, BUFFER_LENGTH - 1);
+    if (n < 0)
     {
-        perror("ERROR on accept");
-        return NULL;
+        perror("Error reading from socket");
+        return -4;
     }
 
-    player->threadData.start = true;
-
-    pthread_mutex_lock(&player->threadData.mutex);
-    receiveMsg_Server(player->playerSock,player->data);
-    sendMsg_Server(player->playerSock, "start\0");
-    pthread_mutex_unlock(&player->threadData.mutex);
-
-    while (strcmp(player->msg, "koniec\0") != 0) {
-        pthread_mutex_lock(&player->threadData.mutex);
-        receiveMsg_Server(player->playerSock, player->msg);
-        printf("HRAC %d: %s\n", player->id, player->msg);
-        pthread_mutex_unlock(&player->threadData.mutex);
-    }
-    pthread_mutex_lock(&player->threadData.mutex);
-    player->threadData.koniec = true;
-    pthread_mutex_unlock(&player->threadData.mutex);
-
-    close(player->playerSock);
-    return NULL;
+    return 0;
 }
 
-void* timeF (void *arg) {
-    GAME *game = arg;
-    while (!game->players[0].threadData.start || !game->players[1].threadData.start) {
-
+uint8_t getTimerMode(uint8_t mode) {
+    switch (mode) {
+        case MINUTE: return MINUTE;
+        case TWO_MINUTES: return TWO_MINUTES;
+        case THREE_MINUTES: return THREE_MINUTES;
+        case FOUR_MINUTES: return FOUR_MINUTES;
+        default: return 130;
     }
-    while (!game->players[0].threadData.koniec && !game->players[1].threadData.koniec) {
-        if (game->time == 0) {
-            printf("SERVER: cas vyprsal!\n");
-            pthread_mutex_lock(&game->threadData.mutex);
-            game->players[0].threadData.koniec = true;
-            pthread_mutex_unlock(&game->threadData.mutex);
-        } else {
-            printf("SERVER: zostavajuci cas: %d\n", game->time);
-            pthread_mutex_lock(&game->threadData.mutex);
-            sprintf(game->players[0].data, "%d", game->time);
-            sprintf(game->players[1].data, "%d", game->time);
-            printf("%s\n", game->players[0].data);
-            sendMsg_Server(game->players[0].playerSock, game->players[0].data);
-            sendMsg_Server(game->players[1].playerSock, game->players[0].data);
-            pthread_mutex_unlock(&game->threadData.mutex);
-        }
-        game->time--;
-        sleep(1);
-    }
-
-    pthread_mutex_lock(&game->threadData.mutex);
-    sendMsg_Server(game->players[0].playerSock, "koniec\0");
-    sendMsg_Server(game->players[1].playerSock, "koniec\0");
-    pthread_mutex_unlock(&game->threadData.mutex);
-
-    return NULL;
 }
 
-int server()
-{
+void setTimerMode (uint8_t time,int * gameTime){
+    *gameTime = TO_SECONDS * (time);
+}
+
+int serverConfig () {
     printf("SERVER: spustam server!\n");
     int sockfd;
     struct sockaddr_in serv_addr;
 
-    bzero((char*)&serv_addr, sizeof(serv_addr)); // inicializacia sietovej adresy
+    bzero((char*)&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(10003);
+    serv_addr.sin_port = htons(PORT);
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0); // vytvorenie socketu
-    if (sockfd < 0)
-    {
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
         perror("Error creating socket");
-        return 1;
+        return -1;
     }
 
-    if (bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) // priradenie adresu socketu
-    {
+    if (bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("Error binding socket address");
-        return 2;
+        return -2;
     }
 
-    listen(sockfd, PLAYERS_MAX); // prijimanie klientov
+    printf("SERVER: Cakam na pripojenie hracov\n");
 
-    printf("SERVER: cakam na pripojenie hracov!\n");
+    if (listen(sockfd, PLAYERS_MAX * 2) < 0) {// lebo budu read a write sockety pre kazdeho hraca
+        perror("listen");
+        exit(EXIT_FAILURE);
+    } // prijimanie klien tov
 
-    THREAD_DATA threadData;
-    threadData.start = false;
-    threadData.koniec = false;
-    pthread_mutex_init(&threadData.mutex,NULL);
+    return sockfd;
+}
 
-    PLAYER playerData[2];
-    for (int i = 0; i < 2; ++i) {
-        playerData[i].id = i;
-        playerData[i].serverSock = sockfd;
-        playerData[i].threadData = threadData;
+int clientConfig (int serverSocket, int * writeSocket, int * readSocket) {
+    socklen_t writeLen, readLen;
+    struct sockaddr_in writeAddr, readAddr;
+
+    writeLen = sizeof(writeAddr);
+    readLen = sizeof(readAddr);
+
+    *writeSocket = accept(serverSocket, (struct sockaddr*)&writeAddr, &writeLen);
+    if (*writeSocket < 0)
+    {
+        perror("ERROR on accept write socket");
+        return -3;
     }
 
-    GAME gameData;
-    gameData.time = 60;
-    gameData.board = (int**)calloc(5, sizeof(int*));
-    for (size_t i = 0; i < 5; ++i) {
-        gameData.board[i] = (int*)calloc(5, sizeof(int));
+    *readSocket = accept(serverSocket, (struct sockaddr*)&readAddr, &readLen);
+    if (*readSocket < 0)
+    {
+        close(*writeSocket);
+        perror("ERROR on accept read socket");
+        return -3;
     }
-    gameData.players = playerData;
-    gameData.threadData = threadData;
+    //printf("Pripojeny %d,%d\n", *writeSocket, *readSocket);
 
-    pthread_t players[2];
+    return 0;
+}
+
+void* clientF (void *arg) {
+    char buffer[BUFFER_LENGTH];
+    CLIENT_STRUCT_SERVER * client = arg;
+
+    while (true) {
+        pthread_mutex_lock(&client->server->mutex);
+        if (client->server->koniec) {
+            pthread_mutex_unlock(&client->server->mutex);
+            break;
+        }
+        pthread_mutex_unlock(&client->server->mutex);
+        receiveMsg(client->readSocket, buffer);
+        printf("%s\n", buffer);
+        pthread_mutex_lock(&client->server->mutex);
+        if (strcmp(buffer, "k") == 0) {
+            client->server->koniec = true;
+            receiveMsg(client->readSocket,buffer);
+            sprintf(buffer, "%d", client->server->vysledneSkore[client->id]);
+            pthread_mutex_unlock(&client->server->mutex);
+            break;
+        } else {
+            bzero(client->data, BUFFER_LENGTH);
+            stpcpy(client->data, buffer);
+        }
+        pthread_mutex_unlock(&client->server->mutex);
+    }
+
+    return NULL;
+}
+
+void* timerF (void *arg) {
+    TIMER * timer = arg;
+
+    while (true) {
+        if (timer->time == 0) {
+            printf("SERVER: cas vyprsal!\n");
+            pthread_mutex_lock(&timer->server->mutex);
+            timer->server->koniec = true;
+            sendMsg(timer->clients[HOST]->writeSocket, "k");
+            sendMsg(timer->clients[CLIENT]->writeSocket, "k");
+            pthread_mutex_unlock(&timer->server->mutex);
+
+            break;
+        }
+        pthread_mutex_lock(&timer->server->mutex);
+        if (timer->server->koniec) {
+            pthread_mutex_unlock(&timer->server->mutex);
+            break;
+        }
+
+        sendMsg(timer->clients[HOST]->writeSocket, timer->clients[CLIENT]->data);
+        printf("Toto je debug ked hostovi ide klient data: %s\n", timer->clients[CLIENT]->data);
+        sendMsg(timer->clients[CLIENT]->writeSocket, timer->clients[HOST]->data);
+        printf("Toto je debug ked klientovi ide host data: %s\n", timer->clients[HOST]->data);
+        pthread_mutex_unlock(&timer->server->mutex);
+        printf("SERVER: zostavajuci cas: %d\n", timer->time);
+        sleep(3);
+        timer->time -= 3;
+    }
+
+    return NULL;
+}
+
+
+
+int server()
+{
+    int error;
+    SERVER serverData;
+    serverData.socket = serverConfig();
+
+    if (serverData.socket < 0) {
+        return abs(serverData.socket);
+    }
+    serverData.koniec = false;
+    pthread_mutex_init(&serverData.mutex, NULL);
+
+    CLIENT_STRUCT_SERVER clientData[PLAYERS_MAX];
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        clientData[i].id = i;
+        bzero(clientData[i].data, BUFFER_LENGTH);
+        clientData[i].server = &serverData;
+        error = abs(clientConfig(serverData.socket, &clientData[i].writeSocket, &clientData[i].readSocket));
+        if (error) {
+            close(serverData.socket);
+            return error;
+        }
+    }
+
+    char buffer[BUFFER_LENGTH];
+
+    TIMER timerData;
+    //timerData.time = 30; nastavit potom
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        timerData.clients[i] = &clientData[i];
+    }
+    timerData.server = &serverData;
+
+    sendMsg(timerData.clients[HOST]->writeSocket, "host");
+    sendMsg(timerData.clients[CLIENT]->writeSocket, "klient");
+
+    receiveMsg(timerData.clients[HOST]->readSocket,buffer);// time;move hodnoty
+    printf("Nastavenie v poradi time;moves %s\n", buffer);
+
+    char timerCH = buffer[0];
+    int timerSet = timerCH - '0';
+    timerData.time = timerSet * TO_SECONDS;
+
+    sendMsg(timerData.clients[HOST]->writeSocket,"zobrazH");
+    sendMsg(timerData.clients[CLIENT]->writeSocket,"zobrazC");
+    usleep(10000);
+    sendMsg(timerData.clients[CLIENT]->writeSocket,buffer); //posielam klientovi nastavenia time;move
+
+    receiveMsg(timerData.clients[HOST]->readSocket,timerData.clients[CLIENT]->data);
+    printf("co prislo hostovi od clienta: %s\n", timerData.clients[CLIENT]->data);
+    receiveMsg(timerData.clients[CLIENT]->readSocket,timerData.clients[HOST]->data);
+    printf("co prislo clientovi od hosta: %s\n", timerData.clients[HOST]->data);
+
+    pthread_t clients[PLAYERS_MAX];
     pthread_t timer;
-    for (int i = 0; i < 2; ++i) {
-        pthread_create(&players[i], NULL, hracF, &playerData[i]);
-    }
-    pthread_create(&timer, NULL, timeF, &gameData);
 
-    for (int i = 0; i < 2; ++i) {
-        pthread_join(players[i], NULL);
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        pthread_create(&clients[i], NULL, clientF, &clientData[i]);
+    }
+    pthread_create(&timer, NULL, timerF, &timerData);
+
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        pthread_join(clients[i], NULL);
     }
     pthread_join(timer, NULL);
 
-    pthread_mutex_destroy(&threadData.mutex);
-    close(sockfd);
-    free(gameData.board);
+    //vyhodnotenie
+
+    if (serverData.vysledneSkore[CLIENT] > serverData.vysledneSkore[HOST]) {
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"VYHRAL SI!");
+        sendMsg(timerData.clients[HOST]->writeSocket,"PREHRAL SI!");
+    }else if (serverData.vysledneSkore[CLIENT] == serverData.vysledneSkore[HOST]) {
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"REMIZA!");
+        sendMsg(timerData.clients[HOST]->writeSocket,"REMIZA!");
+    }else {
+        sendMsg(timerData.clients[HOST]->writeSocket,"VYHRAL SI!");
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"PREHRAL SI!");
+    }
+
+    pthread_mutex_destroy(&serverData.mutex);
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        close(clientData[i].writeSocket);
+        close(clientData[i].readSocket);
+    }
+    close(serverData.socket);
 
     return 0;
 }
 
-
-
-
-
-//
-// Created by PC1 on 04/01/2024.
-//
-
-
-
-
-/*
-int server() {
-    pthread_t th_produce;
-    pthread_t th_receive;
-    struct active_socket my_socket;
-    struct thread_data data;
-    active_socket_init(&my_socket);
-    data.port = 30303;
-    data.my_socket = &my_socket;
-    printf("spusti\n");
-    pthread_create(&th_receive, NULL, process_client_data, &data);
-
-    pthread_join(th_receive, NULL);
-    consume(&data);
-
-
-    printf("%s\n",data.my_socket->received_data.first->data.data);
-    active_socket_stop_reading(&my_socket);
-    char * message = "client";
-    active_socket_write_data(&my_socket,message,6);
-
-    thread_data_destroy(&data);
-    active_socket_destroy(&my_socket);
-}
-
-int initServerSocket(SERVER *serverInfo) {
-    serverInfo->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverInfo->serverSocket < 0) {
-        perror("Chyba - socket.");
-        return -1;
-    }
-
-    serverInfo->opt = 1;
-    if (setsockopt(serverInfo->serverSocket, SOL_SOCKET, SO_REUSEADDR, &(serverInfo->opt), sizeof(serverInfo->opt))) {
-        perror("setsockopt");
-        return -1;
-    }
-
-    return 0;
-}
-int server() {
-    SERVER  serverInfo;
-    serverInfo.port = 30303;
-    printf("Server bol spusteny\n");
-    socklen_t client_addr_len;
-    pthread_t thread;
-
-    //vytvorenie TCP socketu <sys/socket.h>
-    int client_sock;
-    initServerSocket(&serverInfo);
-    //definovanie adresy servera <arpa/inet.h>
-    struct sockaddr_in serverAddress,client_addr;;
-    serverAddress.sin_family = AF_INET;         //internetove sockety
-    serverAddress.sin_addr.s_addr = INADDR_ANY; //prijimame spojenia z celeho internetu
-    serverAddress.sin_port = htons(serverInfo.port);       //nastavenie portu
-
-    //prepojenie adresy servera so socketom <sys/socket.h>
-    if (bind(serverInfo.serverSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) < 0) {
-        perror("Chyba - bind.");
-    }
-
-    if (listen(serverInfo.serverSocket, PLAYERS_MAX) < 0) {
-        perror("listen");
-        exit(EXIT_FAILURE);
-    }
-    while (1) {
-        client_addr_len = sizeof(client_addr);
-        client_sock = accept(serverInfo.serverSocket, (struct sockaddr *)&client_addr, &client_addr_len);
-        if (client_sock < 0) {
-            perror("accept failed");
-            return 1;
-        }
-        printf("Novy klient sa pripojil %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-        if (pthread_create(&thread, NULL, client_handler, &client_sock) != 0) {
-            perror("pthread_create failed");
-            return 1;
-        }
-    }
-}
-
-void * client_handler(void * arg) {
-    int sockfd = *(int *)arg;
-    char  buf[100];
-    recv(sockfd,buf,99,0);
-    send(sockfd,"borec",6,0);
-    printf("%s\n", buf);
-
-    return NULL;
-}
-
-
-void* consume(void* thread_data) {
-    struct thread_data* data = (struct thread_data*)thread_data;
-
-
-    return NULL;
-}
-*/
