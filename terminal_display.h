@@ -38,12 +38,16 @@ typedef struct game_terminal {
     TERMINAL_UI * game_TerminalPrint;
 }GAME_TERMINAL;
 
-
+int countNumberDigits(FIELD * policko);
+void printSymbolFix(TERMINAL_UI terminalPrint, int row, int column, enum ROLE role);
 void initGameSettings(GAME_TERMINAL *game,TERMINAL_UI *game_TerminalPrint ,int gameSize,int gameMove,int gameTimer,enum ROLE role);
 void createBoard(TERMINAL_UI *terminalPrint);
 void freeBoard(TERMINAL_UI *terminalPrint);
 void createBoardHost(TERMINAL_UI * terminalPrint);
 void createBoardClient(TERMINAL_UI * terminalPrint);
+void printBlankSectionWithMessage( int size);
+void printEmptyVertical( int size);
+void printSymbol( TERMINAL_UI terminalPrint, int row, enum ROLE role);
 void printOnlyVerticalSection(int size);
 void printMiddleSection(int size, int row);
 void printSymbolSection(TERMINAL_UI board,int row);
