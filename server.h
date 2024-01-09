@@ -4,58 +4,38 @@
 
 #ifndef POS_SERVER_H
 #define POS_SERVER_H
-#include "libraries.h"
+
 #include "shared.h"
 
 
-typedef struct threadData {
-    bool start;
+typedef struct server {
+    int socket;
+    int vysledneSkore[PLAYERS_MAX];
     bool koniec;
     pthread_mutex_t mutex;
-} THREAD_DATA;
+} SERVER;
 
-
-typedef struct player {
-    enum ROLE role;
-    uint8_t playerMove;
-    int score;
-    char name[MAX_NAME_LENGTH];
-    BOARD playerBoard;
-    int serverSock;
-    int playerSock;
+typedef struct client {
     int id;
-    char data[100];
-    char msg[256];
-    THREAD_DATA threadData;
-} PLAYER;
+    int writeSocket;
+    int readSocket;
+    char data[BUFFER_LENGTH];
+    SERVER * server;
+} CLIENT_STRUCT_SERVER;
 
-
-
-
-typedef struct game {
+typedef struct timer {
     int time;
-    int** board;
-    PLAYER* players;
-    uint8_t game_ConnectedPlayers;
-    uint8_t game_MaxPlayerMoves;
-    enum SIZE_MODE game_Size;
-    THREAD_DATA threadData;
-}GAME;
+    CLIENT_STRUCT_SERVER * clients[PLAYERS_MAX];
+    SERVER * server;
+} TIMER;
 
-typedef struct server {
-    int numberOfClients;
-    int serverSocket;
-    int opt;
-    int port;
-    socklen_t clientAddrLen;
-    struct sockaddr_in serverAddress;
-    struct sockaddr_in client_addr[PLAYERS_MAX];
-    pthread_t clients[PLAYERS_MAX];
 
-}SERVER;
-int server();
-void initServer(SERVER * server);
-void createSocket(SERVER * server);
-void * client_handler(void * arg);
-void* consume(void* thread_data);
+int sendMsg(int writeSocket, char* buffer);
+int receiveMsg(int readSocket, char* buffer);
+int serverConfig(void);
+int clientConfig(int serverSocket, int* writeSocket, int* readSocket);
+void* clientF(void* arg);
+void* timerF(void* arg);
+int server(void);
+
 #endif //POS_SERVER_H
