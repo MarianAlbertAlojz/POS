@@ -14,8 +14,8 @@ int sendMsg (int writeSocket, char* buffer) {
 
 int receiveMsg (int readSocket, char* buffer) {
     int n;
-    bzero(buffer,50);
-    n = read(readSocket, buffer, 49);
+    bzero(buffer,BUFFER_LENGTH);
+    n = read(readSocket, buffer, BUFFER_LENGTH - 1);
     if (n < 0)
     {
         perror("Error reading from socket");
@@ -47,7 +47,7 @@ int serverConfig () {
     bzero((char*)&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(10002);
+    serv_addr.sin_port = htons(PORT);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -99,9 +99,7 @@ int clientConfig (int serverSocket, int * writeSocket, int * readSocket) {
 void* clientF (void *arg) {
     char buffer[BUFFER_LENGTH];
     CLIENT_STRUCT_SERVER * client = arg;
-    //pthread_mutex_lock(&player->threadData->mutex);
-    //pthread_cond_wait(&player->threadData->pokracuj,&player->threadData->mutex);
-   // pthread_mutex_unlock(&player->threadData->mutex);
+
     while (true) {
         pthread_mutex_lock(&client->server->mutex);
         if (client->server->koniec) {
@@ -114,6 +112,8 @@ void* clientF (void *arg) {
         pthread_mutex_lock(&client->server->mutex);
         if (strcmp(buffer, "k") == 0) {
             client->server->koniec = true;
+            receiveMsg(client->readSocket,buffer);
+            sprintf(buffer, "%d", client->server->vysledneSkore[client->id]);
             pthread_mutex_unlock(&client->server->mutex);
             break;
         } else {
@@ -147,8 +147,9 @@ void* timerF (void *arg) {
         }
 
         sendMsg(timer->clients[HOST]->writeSocket, timer->clients[CLIENT]->data);
+        printf("Toto je debug ked hostovi ide klient data: %s\n", timer->clients[CLIENT]->data);
         sendMsg(timer->clients[CLIENT]->writeSocket, timer->clients[HOST]->data);
-
+        printf("Toto je debug ked klientovi ide host data: %s\n", timer->clients[HOST]->data);
         pthread_mutex_unlock(&timer->server->mutex);
         printf("SERVER: zostavajuci cas: %d\n", timer->time);
         sleep(3);
@@ -205,10 +206,13 @@ int server()
 
     sendMsg(timerData.clients[HOST]->writeSocket,"zobrazH");
     sendMsg(timerData.clients[CLIENT]->writeSocket,"zobrazC");
-
-    //receiveMsg(timerData.clients[HOST]->readSocket,timerData.clients[CLIENT]->data);
-    //printf("Potvrdenie od clienta %s\n", timerData.clients[CLIENT]->data);
+    usleep(10000);
     sendMsg(timerData.clients[CLIENT]->writeSocket,buffer); //posielam klientovi nastavenia time;move
+
+    receiveMsg(timerData.clients[HOST]->readSocket,timerData.clients[CLIENT]->data);
+    printf("co prislo hostovi od clienta: %s\n", timerData.clients[CLIENT]->data);
+    receiveMsg(timerData.clients[CLIENT]->readSocket,timerData.clients[HOST]->data);
+    printf("co prislo clientovi od hosta: %s\n", timerData.clients[HOST]->data);
 
     pthread_t clients[PLAYERS_MAX];
     pthread_t timer;
@@ -222,6 +226,19 @@ int server()
         pthread_join(clients[i], NULL);
     }
     pthread_join(timer, NULL);
+
+    //vyhodnotenie
+
+    if (serverData.vysledneSkore[CLIENT] > serverData.vysledneSkore[HOST]) {
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"VYHRAL SI!");
+        sendMsg(timerData.clients[HOST]->writeSocket,"PREHRAL SI!");
+    }else if (serverData.vysledneSkore[CLIENT] == serverData.vysledneSkore[HOST]) {
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"REMIZA!");
+        sendMsg(timerData.clients[HOST]->writeSocket,"REMIZA!");
+    }else {
+        sendMsg(timerData.clients[HOST]->writeSocket,"VYHRAL SI!");
+        sendMsg(timerData.clients[CLIENT]->writeSocket,"PREHRAL SI!");
+    }
 
     pthread_mutex_destroy(&serverData.mutex);
     for (int i = 0; i < PLAYERS_MAX; ++i) {

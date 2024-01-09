@@ -10,6 +10,7 @@
 #define PLAYERS_MAX 2
 #define BUFFER_LENGTH 256
 #define TO_SECONDS 60
+#define PORT 10003
 enum ROLE {
     HOST,
     CLIENT

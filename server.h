@@ -10,6 +10,7 @@
 
 typedef struct server {
     int socket;
+    int vysledneSkore[PLAYERS_MAX];
     bool koniec;
     pthread_mutex_t mutex;
 } SERVER;
@@ -28,27 +29,13 @@ typedef struct timer {
     SERVER * server;
 } TIMER;
 
-typedef struct player {
-    enum ROLE role;
-    uint8_t playerMove;
-    int score;
-    char name[MAX_NAME_LENGTH];
-    BOARD playerBoard;
-    int serverSock;
-    int playerSock;
-    int id;
-    char data[100];
-    char msg[BUFFER_LENGTH];
 
-} PLAYER;
-
-
-int sendMsg (int writeSocket, char* buffer);
-int receiveMsg (int readSocket, char* buffer);
-uint8_t getTimerMode(uint8_t mode);
-void setTimerMode(uint8_t time, int* gameTime);
-void* hracF(void* arg);
-void* timeF(void* arg);
+int sendMsg(int writeSocket, char* buffer);
+int receiveMsg(int readSocket, char* buffer);
+int serverConfig(void);
+int clientConfig(int serverSocket, int* writeSocket, int* readSocket);
+void* clientF(void* arg);
+void* timerF(void* arg);
 int server(void);
 
 #endif //POS_SERVER_H

@@ -29,18 +29,21 @@ typedef struct send {
 
 
 
-int sendMsg_Client(int sockfd, char* buffer);
-int receiveMsg_Client(int sockfd, char* buffer);
+int sendMsg_Client(int writeSocket, char* buffer);
+int receiveMsg_Client(int readSocket, char* buffer);
 bool pohyb(char smer, TERMINAL_UI* terminalPrint, enum ROLE role);
 const char* timerModeToString(enum TIMER_MODE mode);
 const char* playerMoveModeToString(enum PLAYER_MOVE_MODE mode);
 void printTimerModes(void);
 void printPlayerMoveModes(void);
-void initGameSettings(GAME_TERMINAL* game, TERMINAL_UI* game_TerminalPrint, int gameSize, int gameMove, int gameTimer, enum ROLE role);
-void pickRole(TERMINAL_UI* gameTerminal, CLIENT_STRUCT_CLIENT* klient, char* role);
-void generuj(TERMINAL_UI* terminalPrint, enum ROLE role);
-void concatenateArray(GAME_TERMINAL* gameTerminal, char resultString[], enum ROLE role);
-void parseString(const char* concatenatedString, GAME_TERMINAL* gameTerminal, enum ROLE role);
-int countScore(GAME_TERMINAL* gameTerminal, enum ROLE role);
+void initGameSettings(GAME_TERMINAL *game, TERMINAL_UI *game_TerminalPrint, int gameSize, int gameMove, int gameTimer, enum ROLE role);
+void pickRole(TERMINAL_UI *gameTerminal, CLIENT_STRUCT_CLIENT *klient, char *role);
+void generuj(TERMINAL_UI *terminalPrint, enum ROLE role);
+void concatenateArray(GAME_TERMINAL *gameTerminal, char resultString[BUFFER_LENGTH], enum ROLE role);
+void parseString(const char* concatenatedString, GAME_TERMINAL *gameTerminal, enum ROLE role);
+int countScore(GAME_TERMINAL *gameTerminal, enum ROLE role);
+void *move(void *arg);
+void *update(void *arg);
 int client(void);
+int config(int *readSocket, int *writeSocket);
 #endif //POS_CLIENT_H

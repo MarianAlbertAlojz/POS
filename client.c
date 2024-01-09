@@ -265,16 +265,16 @@ void generuj(TERMINAL_UI *terminalPrint, enum ROLE role) {
     *p_valueOfField = (rand() % 2 + 1) * 2;
 }
 
-void concatenateArray(GAME_TERMINAL * gameTerminal, char resultString[BUFFER_LENGTH], enum ROLE role) {
+void concatenateArray(GAME_TERMINAL * gameTerminal, char  resultString[BUFFER_LENGTH], enum ROLE role) {
     int offset = 0;
     int value = 0;
 
     value = gameTerminal->game_timerPrint;
     offset += sprintf(resultString + offset, "%d:",value);
-
+    //printf("Toto je debug pri spajani: %s\n", resultString);
     value = gameTerminal->playersInfo[role].playerMove;
     offset += sprintf(resultString + offset, "%d:",value);
-
+    //printf("Toto je debug pri spajani: %s\n", resultString);
     for (int riadok = 0; riadok < gameTerminal->game_TerminalPrint->boardSize; ++riadok) {
         for (int stlpec = 0; stlpec < gameTerminal->game_TerminalPrint->boardSize; ++stlpec) {
             value = gameTerminal->game_TerminalPrint->boardClients[role].policka[riadok][stlpec].value;
@@ -321,6 +321,7 @@ void parseString(const char* concatenatedString, GAME_TERMINAL * gameTerminal, e
     }
     gameTerminal->playersInfo[HOST].score = countScore(gameTerminal,HOST);
     gameTerminal->playersInfo[CLIENT].score = countScore(gameTerminal,CLIENT);
+    printf("Toto je debug pri rozdelovani: %s\n", concatenatedString);
 }
 
 int countScore(GAME_TERMINAL * gameTerminal, enum ROLE role) {
@@ -350,7 +351,7 @@ int config (int * readSocket, int * writeSocket) {
             (char*)&serv_addr.sin_addr.s_addr,
             server->h_length
     );
-    serv_addr.sin_port = htons(10002);
+    serv_addr.sin_port = htons(PORT);
 
     *readSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (*readSocket < 0) {
@@ -379,7 +380,7 @@ void * move (void * arg) {
     SEND * send = arg;
     char buffer[BUFFER_LENGTH];
     bzero(buffer, BUFFER_LENGTH);
-
+    generuj(send->client->boards->game_TerminalPrint,send->client->role);
     while (true) {
         pthread_mutex_lock(&send->client->mutex);
         if (send->client->koniec) {
@@ -392,6 +393,9 @@ void * move (void * arg) {
         pthread_mutex_lock(&send->client->mutex);
         if (strcmp(buffer, "k") == 0) {
             sendMsg_Client(send->writeSocket, buffer);
+            bzero(buffer,BUFFER_LENGTH);
+            sprintf(buffer, "%d", send->client->boards->playersInfo[send->client->role].score);
+            sendMsg_Client(send->writeSocket,buffer);
             send->client->koniec = true;
             pthread_mutex_unlock(&send->client->mutex);
             break;
@@ -402,7 +406,7 @@ void * move (void * arg) {
 
         }
         concatenateArray(send->client->boards,buffer,send->client->role);
-
+        printf("tu je debugg :  %s\n", buffer);
 
         pthread_mutex_unlock(&send->client->mutex);
         sendMsg_Client(send->writeSocket,buffer);// posielam hodnoty timer:move:hodnotypola;pole;pole
@@ -424,7 +428,12 @@ void * update (void * arg) {
             break;
         }
         pthread_mutex_unlock(&receive->client->mutex);
-        receiveMsg_Client(receive->readSocket, buffer); // timer:pohyb:datapole
+        receiveMsg_Client(receive->readSocket, buffer); // timer:pohyb:datapoleň
+
+        if (strcmp(buffer,"REMIZA!") == 0 ||strcmp(buffer,"VYHRAL SI!") == 0 || strcmp(buffer,"PREHRAL SI!") == 0 ) {
+            printf("%s\n", buffer);
+            break;
+        }
         printf("%s\n", buffer);
         pthread_mutex_lock(&receive->client->mutex);
         parseString(buffer,receive->client->boards,receive->client->role);//hodnoty precitam a rovno zapisem do board
@@ -457,7 +466,16 @@ int client()
     char localBuffer[BUFFER_LENGTH];
     GAME_TERMINAL gameClient;
     TERMINAL_UI gameTerminal;
-
+    gameClient.game_timerPrint = 0;
+    gameClient.game_sizeMode = 0;
+    gameClient.game_moveMode = 0;
+    gameClient.game_timerMode = 0;
+    for (int i = 0; i < PLAYERS_MAX; ++i) {
+        bzero(gameClient.playersInfo[i].name,MAX_NAME_LENGTH);
+        gameClient.playersInfo[i].playerMove = 0;
+        gameClient.playersInfo[i].score = 0;
+    }
+    gameClient.game_TerminalPrint = &gameTerminal;
     receiveMsg_Client(receiveData.readSocket,localBuffer);
     if(strcmp(localBuffer,"host\0") == 0){
         pickRole(&gameTerminal, &klientData, "host\0");
@@ -495,7 +513,14 @@ int client()
         klientData.boards = &gameClient;
     }
     createBoard(&gameTerminal);
-    generuj(klientData.boards->game_TerminalPrint,klientData.role);
+    //generuj(klientData.boards->game_TerminalPrint,klientData.role);
+    //concatenateArray(klientData.boards,localBuffer,klientData.role);
+    if (klientData.role == CLIENT) {
+        usleep(10000);
+
+    }
+    sendMsg_Client(sendData.writeSocket,localBuffer);
+    printf("%s\n", localBuffer);
 //koniec nastavenia klientov
 
     pthread_t receiving;
@@ -507,6 +532,12 @@ int client()
     pthread_join(sending, NULL);
     pthread_join(receiving, NULL);
 
+    //vitaz
+    bzero(localBuffer,BUFFER_LENGTH);
+    sprintf(localBuffer, "%d", klientData.boards->playersInfo[klientData.role].score);
+    sendMsg_Client(sendData.writeSocket,localBuffer);
+    receiveMsg_Client(receiveData.readSocket,localBuffer);
+    //printf("%s\n",localBuffer);
     printf("oka DEBUG KONIEC\n");
 
     pthread_mutex_destroy(&klientData.mutex);
